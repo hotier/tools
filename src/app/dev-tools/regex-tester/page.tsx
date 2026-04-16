@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
+import { Button } from "@/components/Button";
 
 export default function RegexTesterPage() {
   useTrackToolUsage("/dev-tools/regex-tester", "正则测试");
@@ -35,6 +36,20 @@ export default function RegexTesterPage() {
       return testString;
     }
   }, [pattern, flags, testString, error]);
+
+  const loadSampleData = () => {
+    // 匹配中国手机号的正则表达式
+    setPattern("1[3-9]\\d{9}");
+    setFlags("g");
+    setTestString(`联系信息:\n张三: 13812345678\n李四: 15987654321\n王五: 18611112222\n赵六: 17733334444\n无效号码: 12345678901\n固定电话: 010-12345678`);
+  };
+
+  const clearAll = () => {
+    setPattern("");
+    setFlags("g");
+    setTestString("");
+    setError("");
+  };
 
   return (
     <ToolPageLayout title="正则测试" href="/dev-tools/regex-tester">
@@ -74,7 +89,7 @@ export default function RegexTesterPage() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-2">测试字符串</label>
           <textarea
@@ -87,14 +102,14 @@ export default function RegexTesterPage() {
         <div>
           <label className="block text-sm font-medium mb-2">匹配结果</label>
           <div
-            className="w-full h-64 p-4 border rounded-lg overflow-auto bg-background whitespace-pre-wrap"
+            className="w-full h-64 p-4 border rounded-lg overflow-auto bg-background whitespace-pre-wrap font-mono text-sm"
             dangerouslySetInnerHTML={{ __html: highlightedText || "" }}
           />
         </div>
       </div>
 
       {results && results.length > 0 && (
-        <div className="mt-4 p-4 bg-secondary/50 rounded-lg">
+        <div className="mt-4 p-4 bg-secondary/50 rounded-lg mb-6">
           <h3 className="font-semibold mb-2">匹配详情</h3>
           <div className="text-sm">
             找到 <span className="font-bold text-primary">{results.length}</span> 个匹配:
@@ -109,14 +124,19 @@ export default function RegexTesterPage() {
         </div>
       )}
 
-      <div className="mt-4 p-4 bg-muted/50 rounded-lg">
-        <h3 className="font-semibold mb-2">常用标志说明</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
-          <div><code className="text-primary">g</code> - 全局匹配</div>
-          <div><code className="text-primary">i</code> - 忽略大小写</div>
-          <div><code className="text-primary">m</code> - 多行模式</div>
-          <div><code className="text-primary">s</code> - .匹配换行</div>
-        </div>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Button
+          onClick={loadSampleData}
+          variant="secondary"
+        >
+          示例数据
+        </Button>
+        <Button
+          onClick={clearAll}
+          variant="danger"
+        >
+          清空
+        </Button>
       </div>
     </ToolPageLayout>
   );

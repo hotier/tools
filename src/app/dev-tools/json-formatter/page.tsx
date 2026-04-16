@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
+import { Button } from "@/components/Button";
 
 export default function JsonFormatterPage() {
   useTrackToolUsage("/dev-tools/json-formatter", "JSON 格式化");
@@ -12,6 +13,61 @@ export default function JsonFormatterPage() {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [indent, setIndent] = useState(2);
+  const [mode, setMode] = useState<"format" | "minify">('format');
+  const [loadSample, setLoadSample] = useState(false);
+
+  // 监听 loadSample 状态，当为 true 时加载示例数据并执行转换
+  useEffect(() => {
+    if (loadSample) {
+      const sample = {
+        "name": "John Doe",
+        "age": 30,
+        "isActive": true,
+        "address": {
+          "street": "123 Main St",
+          "city": "New York",
+          "zipCode": "10001"
+        },
+        "hobbies": ["reading", "gaming", "coding"]
+      };
+      const sampleJson = JSON.stringify(sample);
+      setInput(sampleJson);
+      
+      // 直接处理转换，使用样本数据而不是依赖状态更新
+      try {
+        const parsed = JSON.parse(sampleJson);
+        if (mode === 'format') {
+          setOutput(JSON.stringify(parsed, null, indent));
+        } else {
+          setOutput(JSON.stringify(parsed));
+        }
+        setError("");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "JSON 解析错误");
+        setOutput("");
+      }
+      
+      // 重置 loadSample 状态
+      setLoadSample(false);
+    }
+  }, [loadSample, mode, indent]);
+
+  const loadSampleData = () => {
+    setLoadSample(true);
+  };
+
+  const handleProcess = () => {
+    if (!input.trim()) {
+      setError("请输入 JSON 数据");
+      setOutput("");
+      return;
+    }
+    if (mode === 'format') {
+      formatJson();
+    } else {
+      minifyJson();
+    }
+  };
 
   const formatJson = () => {
     try {
@@ -42,33 +98,37 @@ export default function JsonFormatterPage() {
 
   return (
     <ToolPageLayout title="JSON 格式化" href="/dev-tools/json-formatter">
-      <div className="mb-4 flex items-center gap-4">
-        <label className="flex items-center gap-2">
-          <span className="text-sm">缩进空格数:</span>
-          <select
-            value={indent}
-            onChange={(e) => setIndent(Number(e.target.value))}
-            className="border rounded px-2 py-1 bg-background"
+      <div className="mb-4 flex items-center gap-4 flex-wrap">
+        <div className="flex rounded-lg border overflow-hidden">
+          <button
+            onClick={() => setMode("format")}
+            className={`px-4 py-2 text-sm ${mode === "format" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
           >
-            <option value={2}>2</option>
-            <option value={4}>4</option>
-          </select>
-        </label>
-        <button
-          onClick={formatJson}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90"
-        >
-          格式化
-        </button>
-        <button
-          onClick={minifyJson}
-          className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90"
-        >
-          压缩
-        </button>
+            格式化
+          </button>
+          <button
+            onClick={() => setMode("minify")}
+            className={`px-4 py-2 text-sm ${mode === "minify" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+          >
+            压缩
+          </button>
+        </div>
+        <div className="flex rounded-lg border border-gray-300 overflow-hidden">
+          <span className="px-2 py-2 text-sm bg-gray-100">缩进空格数:</span>
+          <div className="border-l border-gray-300">
+            <select
+              value={indent}
+              onChange={(e) => setIndent(Number(e.target.value))}
+              className="border-0 px-2 py-2 bg-background text-sm focus:outline-none"
+            >
+              <option value={2}>2</option>
+              <option value={4}>4</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-2">输入 JSON</label>
           <textarea
@@ -79,17 +139,7 @@ export default function JsonFormatterPage() {
           />
         </div>
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-medium">输出结果</label>
-            {output && (
-              <button
-                onClick={copyToClipboard}
-                className="text-sm text-primary hover:underline"
-              >
-                复制
-              </button>
-            )}
-          </div>
+          <label className="block text-sm font-medium mb-2">输出结果</label>
           {error ? (
             <div className="w-full h-96 p-4 border rounded-lg bg-red-500/10 text-red-500 overflow-auto">
               {error}
@@ -103,6 +153,36 @@ export default function JsonFormatterPage() {
             />
           )}
         </div>
+      </div>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Button
+          onClick={handleProcess}
+          variant="primary"
+        >
+          转换
+        </Button>
+        <Button
+          onClick={() => {
+            if (output) {
+              copyToClipboard();
+            } else {
+              loadSampleData();
+            }
+          }}
+          variant={output ? "success" : "secondary"}
+        >
+          {output ? "复制结果" : "示例数据"}
+        </Button>
+        <Button
+          onClick={() => {
+            setInput("");
+            setOutput("");
+            setError("");
+          }}
+          variant="danger"
+        >
+          清空
+        </Button>
       </div>
     </ToolPageLayout>
   );

@@ -5,6 +5,7 @@ import * as XLSX from "xlsx";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
+import { Button, FileInputButton } from "@/components/Button";
 
 interface ParsedInterval {
   original: string;
@@ -440,11 +441,16 @@ function parseSingleInterval(
 export default function IntervalParserPage() {
   useTrackToolUsage("/converters/interval-parser", "区间解析");
   const { showToast } = useToast();
-  const [input, setInput] = useState("1%<x≤5%\n10<x<100\nx≥50");
+  const [input, setInput] = useState("");
   const [precision, setPrecision] = useState(3);
   const [customLower, setCustomLower] = useState<string>("");
   const [customUpper, setCustomUpper] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const loadSampleData = () => {
+    const sample = "1%<x≤5%\n10<x<100\nx≥50\nm<=50\n0.5<y<0.8";
+    setInput(sample);
+  };
 
   const parsedResults = useMemo(() => {
     const lines = input.split("\n").filter((line) => line.trim());
@@ -502,8 +508,7 @@ export default function IntervalParserPage() {
     showToast("导出成功");
   };
 
-  const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileImport = (file: File) => {
     if (!file) return;
 
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -541,27 +546,12 @@ export default function IntervalParserPage() {
     } else {
       showToast("不支持的文件格式", "error");
     }
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   return (
     <ToolPageLayout title="区间解析" href="/converters/interval-parser">
       <div className="space-y-6">
-        <div className="flex flex-wrap gap-2">
-          <label className="px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90 cursor-pointer">
-            导入文件
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".txt,.xlsx,.xls"
-              onChange={handleFileImport}
-              className="hidden"
-            />
-          </label>
-        </div>
+
 
         <div>
           <label className="block text-sm font-medium mb-2">输入区间表达式（每行一个）</label>
@@ -621,110 +611,109 @@ export default function IntervalParserPage() {
           </div>
         </div>
 
-        {parsedResults.length > 0 && (
-          <div className="space-y-3">
-            <div className="border rounded-lg overflow-hidden">
-              <div className="overflow-x-auto max-h-[220px] overflow-y-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted sticky top-0">
-                    <tr>
-                      <th className="px-4 py-3 text-left font-medium">原始表达式</th>
-                      <th className="px-4 py-3 text-left font-medium">格式化表达式</th>
-                      <th className="px-4 py-3 text-left font-medium">下限</th>
-                      <th className="px-4 py-3 text-left font-medium">下限类型</th>
-                      <th className="px-4 py-3 text-left font-medium">上限</th>
-                      <th className="px-4 py-3 text-left font-medium">上限类型</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
-                    {parsedResults.map((result, index) => (
-                      <tr key={index} className={result.error ? "bg-red-500/5" : ""}>
-                        <td className="px-4 py-3 font-mono">{result.original || "(空行)"}</td>
-                        <td className="px-4 py-3 font-mono">{result.formatted || "-"}</td>
-                        <td className="px-4 py-3 font-mono">
-                          {result.error ? (
-                            <span className="text-red-500">{result.error}</span>
-                          ) : (
-                            <span className={result.isCustomLower ? "text-blue-500" : ""}>
-                              {result.lowerDisplay ?? "-"}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={result.isCustomLower ? "text-blue-500" : ""}>
-                            {result.lowerType}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 font-mono">
-                          <span className={result.isCustomUpper ? "text-blue-500" : ""}>
-                            {result.upperDisplay ?? "-"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={result.isCustomUpper ? "text-blue-500" : ""}>
-                            {result.upperType}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 justify-center">
-              <button
-                onClick={() => {
-                  const header = "原始表达式\t格式化表达式\t下限\t下限类型\t上限\t上限类型";
-                  const text = parsedResults
-                    .filter((r) => !r.error && (r.lowerDisplay || r.upperDisplay))
-                    .map((r) => `${r.original}\t${r.formatted}\t${r.lowerDisplay ?? "-"}\t${r.lowerType}\t${r.upperDisplay ?? "-"}\t${r.upperType}`)
-                    .join("\n");
-                  if (text) {
-                    copyToClipboard(`${header}\n${text}`);
-                  }
-                }}
-                disabled={validResults.length === 0}
-                className="px-4 py-2 bg-blue-500/10 text-blue-500/70 border border-blue-500/10 rounded-lg hover:bg-blue-500/80 hover:text-white hover:border-blue-500/80 disabled:opacity-50 disabled:hover:bg-blue-500/10 disabled:hover:text-blue-500/70 disabled:hover:border-blue-500/10 transition-all duration-200"
-              >
-                复制结果
-              </button>
-              <button
-                onClick={exportTxt}
-                disabled={validResults.length === 0}
-                className="px-4 py-2 bg-green-500/10 text-green-500/70 border border-green-500/10 rounded-lg hover:bg-green-500/80 hover:text-white hover:border-green-500/80 disabled:opacity-50 disabled:hover:bg-green-500/10 disabled:hover:text-green-500/70 disabled:hover:border-green-500/10 transition-all duration-200"
-              >
-                导出 TXT
-              </button>
-              <button
-                onClick={exportExcel}
-                disabled={validResults.length === 0}
-                className="px-4 py-2 bg-emerald-500/10 text-emerald-500/70 border border-emerald-500/10 rounded-lg hover:bg-emerald-500/80 hover:text-white hover:border-emerald-500/80 disabled:opacity-50 disabled:hover:bg-emerald-500/10 disabled:hover:text-emerald-500/70 disabled:hover:border-emerald-500/10 transition-all duration-200"
-              >
-                导出 Excel
-              </button>
-              <button
-                onClick={() => setInput("")}
-                className="px-4 py-2 bg-red-500/10 text-red-500/70 border border-red-500/10 rounded-lg hover:bg-red-500/80 hover:text-white hover:border-red-500/80 transition-all duration-200"
-              >
-                清空
-              </button>
-            </div>
+        <div className="border rounded-lg overflow-hidden">
+          <div className="overflow-x-auto max-h-[220px] overflow-y-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted sticky top-0">
+                <tr>
+                  <th className="px-4 py-3 text-left font-medium">原始表达式</th>
+                  <th className="px-4 py-3 text-left font-medium">格式化表达式</th>
+                  <th className="px-4 py-3 text-left font-medium">下限</th>
+                  <th className="px-4 py-3 text-left font-medium">下限类型</th>
+                  <th className="px-4 py-3 text-left font-medium">上限</th>
+                  <th className="px-4 py-3 text-left font-medium">上限类型</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {parsedResults.length > 0 ? parsedResults.map((result, index) => (
+                  <tr key={index} className={result.error ? "bg-red-500/5" : ""}>
+                    <td className="px-4 py-3 font-mono">{result.original || "(空行)"}</td>
+                    <td className="px-4 py-3 font-mono">{result.formatted || "-"}</td>
+                    <td className="px-4 py-3 font-mono">
+                      {result.error ? (
+                        <span className="text-red-500">{result.error}</span>
+                      ) : (
+                        <span className={result.isCustomLower ? "text-blue-500" : ""}>
+                          {result.lowerDisplay ?? "-"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={result.isCustomLower ? "text-blue-500" : ""}>
+                        {result.lowerType}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 font-mono">
+                      <span className={result.isCustomUpper ? "text-blue-500" : ""}>
+                        {result.upperDisplay ?? "-"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={result.isCustomUpper ? "text-blue-500" : ""}>
+                        {result.upperType}
+                      </span>
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
+                      暂无解析结果
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+        </div>
 
-        <div className="p-4 bg-muted/50 rounded-lg">
-          <h3 className="font-semibold mb-2">使用说明</h3>
-          <ul className="text-sm text-muted-foreground space-y-1">
-            <li>• 支持格式：1%&lt;x&lt;=5%、1&lt;n&lt;10、x&gt;=100、m&lt;=50 等（变量名支持任意字母）</li>
-            <li>• 符号支持：&lt;、&gt;、≤、≥、&lt;=、&gt;=，输入支持全角符号，输出统一为半角格式</li>
-            <li>• 每行输入一个区间表达式，支持批量解析</li>
-            <li>• 开区间（&lt; 或 &gt;）的边界值会根据精度自动调整</li>
-            <li>• 闭区间（&lt;= 或 &gt;=）的边界值保持不变</li>
-            <li>• 单向区间（如 x≥50）可设置自定义下限/上限值</li>
-            <li>• 自定义值可输入小数或百分比格式，系统自动解析数值进行验证</li>
-            <li>• 自定义值需符合区间逻辑（如 x&gt;50 时上限必须大于50）</li>
-            <li>• 支持导入 TXT/Excel 文件，导出为 TXT/Excel 格式</li>
-          </ul>
+        <div className="flex flex-wrap gap-2 justify-center">
+          <FileInputButton
+            onFileSelect={handleFileImport}
+            accept=".txt,.xlsx,.xls"
+          >
+            导入文件
+          </FileInputButton>
+          <Button
+            onClick={() => {
+              if (!input.trim()) {
+                loadSampleData();
+              } else {
+                const header = "原始表达式\t格式化表达式\t下限\t下限类型\t上限\t上限类型";
+                const text = parsedResults
+                  .filter((r) => !r.error && (r.lowerDisplay || r.upperDisplay))
+                  .map((r) => `${r.original}\t${r.formatted}\t${r.lowerDisplay ?? "-"}\t${r.lowerType}\t${r.upperDisplay ?? "-"}\t${r.upperType}`)
+                  .join("\n");
+                if (text) {
+                  copyToClipboard(`${header}\n${text}`);
+                }
+              }
+            }}
+            variant="success"
+          >
+            {!input.trim() ? "示例数据" : "复制结果"}
+          </Button>
+          <Button
+            onClick={exportTxt}
+            variant="warning"
+          >
+            导出 TXT
+          </Button>
+          <Button
+            onClick={exportExcel}
+            variant="warning"
+          >
+            导出 Excel
+          </Button>
+          <Button
+            onClick={() => {
+              setInput("");
+              setCustomLower("");
+              setCustomUpper("");
+            }}
+            variant="danger"
+          >
+            清空
+          </Button>
         </div>
       </div>
     </ToolPageLayout>

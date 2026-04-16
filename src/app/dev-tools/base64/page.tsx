@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
+import { Button } from "@/components/Button";
 
 export default function Base64Page() {
   useTrackToolUsage("/dev-tools/base64", "Base64 编解码");
@@ -12,6 +13,36 @@ export default function Base64Page() {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [mode, setMode] = useState<"encode" | "decode">("encode");
+  const [loadSample, setLoadSample] = useState(false);
+
+  // 监听 loadSample 状态，当为 true 时加载示例数据并执行转换
+  useEffect(() => {
+    if (loadSample) {
+      let sampleData = "";
+      if (mode === "encode") {
+        sampleData = "Hello, Base64 encoding!";
+      } else {
+        sampleData = "SGVsbG8sIEJhc2U2NCBlbmNvZGluZyE=";
+      }
+      setInput(sampleData);
+      
+      // 直接处理转换，使用样本数据而不是依赖状态更新
+      try {
+        if (mode === "encode") {
+          setOutput(btoa(unescape(encodeURIComponent(sampleData))));
+        } else {
+          setOutput(decodeURIComponent(escape(atob(sampleData))));
+        }
+        setError("");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "处理错误");
+        setOutput("");
+      }
+      
+      // 重置 loadSample 状态
+      setLoadSample(false);
+    }
+  }, [loadSample, mode]);
 
   const encode = () => {
     try {
@@ -32,6 +63,11 @@ export default function Base64Page() {
   };
 
   const handleConvert = () => {
+    if (!input.trim()) {
+      setError("请输入数据");
+      setOutput("");
+      return;
+    }
     if (mode === "encode") {
       encode();
     } else {
@@ -44,44 +80,30 @@ export default function Base64Page() {
     showToast("复制成功");
   };
 
-  const swap = () => {
-    setInput(output);
-    setOutput("");
-    setMode(mode === "encode" ? "decode" : "encode");
+  const loadSampleData = () => {
+    setLoadSample(true);
   };
 
   return (
     <ToolPageLayout title="Base64 编解码" href="/dev-tools/base64">
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-4 flex items-center gap-4 flex-wrap">
         <div className="flex rounded-lg border overflow-hidden">
           <button
             onClick={() => setMode("encode")}
-            className={`px-4 py-2 ${mode === "encode" ? "bg-primary text-primary-foreground" : "bg-background"}`}
+            className={`px-4 py-2 text-sm ${mode === "encode" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
           >
             编码
           </button>
           <button
             onClick={() => setMode("decode")}
-            className={`px-4 py-2 ${mode === "decode" ? "bg-primary text-primary-foreground" : "bg-background"}`}
+            className={`px-4 py-2 text-sm ${mode === "decode" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
           >
             解码
           </button>
         </div>
-        <button
-          onClick={handleConvert}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90"
-        >
-          {mode === "encode" ? "编码" : "解码"}
-        </button>
-        <button
-          onClick={swap}
-          className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90"
-        >
-          交换
-        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-2">
             {mode === "encode" ? "原始文本" : "Base64 字符串"}
@@ -89,37 +111,57 @@ export default function Base64Page() {
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="w-full h-80 p-4 border rounded-lg font-mono text-sm bg-background resize-none"
+            className="w-full h-96 p-4 border rounded-lg font-mono text-sm bg-background resize-none"
             placeholder={mode === "encode" ? "输入要编码的文本" : "输入 Base64 字符串"}
           />
         </div>
         <div>
-          <div className="flex justify-between items-center mb-2">
-            <label className="text-sm font-medium">
-              {mode === "encode" ? "Base64 结果" : "解码结果"}
-            </label>
-            {output && (
-              <button
-                onClick={copyToClipboard}
-                className="text-sm text-primary hover:underline"
-              >
-                复制
-              </button>
-            )}
-          </div>
+          <label className="block text-sm font-medium mb-2">
+            {mode === "encode" ? "Base64 结果" : "解码结果"}
+          </label>
           {error ? (
-            <div className="w-full h-80 p-4 border rounded-lg bg-red-500/10 text-red-500 overflow-auto">
+            <div className="w-full h-96 p-4 border rounded-lg bg-red-500/10 text-red-500 overflow-auto">
               {error}
             </div>
           ) : (
             <textarea
               value={output}
               readOnly
-              className="w-full h-80 p-4 border rounded-lg font-mono text-sm bg-background resize-none"
+              className="w-full h-96 p-4 border rounded-lg font-mono text-sm bg-background resize-none"
               placeholder="结果将显示在这里"
             />
           )}
         </div>
+      </div>
+      <div className="flex flex-wrap gap-2 justify-center">
+        <Button
+          onClick={handleConvert}
+          variant="primary"
+        >
+          {mode === "encode" ? "编码" : "解码"}
+        </Button>
+        <Button
+          onClick={() => {
+            if (output) {
+              copyToClipboard();
+            } else {
+              loadSampleData();
+            }
+          }}
+          variant={output ? "success" : "secondary"}
+        >
+          {output ? "复制结果" : "示例数据"}
+        </Button>
+        <Button
+          onClick={() => {
+            setInput("");
+            setOutput("");
+            setError("");
+          }}
+          variant="danger"
+        >
+          清空
+        </Button>
       </div>
     </ToolPageLayout>
   );

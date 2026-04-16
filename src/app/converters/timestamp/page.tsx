@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
+import { Button } from "@/components/Button";
 
 export default function TimestampPage() {
   useTrackToolUsage("/converters/timestamp", "时间戳转换");
@@ -96,12 +97,12 @@ export default function TimestampPage() {
               {formatDateTime(currentTimestamp)} (UTC+8)
             </div>
           </div>
-          <button
+          <Button
             onClick={setCurrentAsInput}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded hover:opacity-90"
+            variant="primary"
           >
             使用当前时间
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -127,13 +128,13 @@ export default function TimestampPage() {
                 readOnly
                 className="flex-1 p-3 border rounded-lg font-mono bg-muted"
               />
-              <button
+              <Button
                 onClick={() => copyToClipboard(inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : "")}
                 disabled={!inputTimestamp}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90 disabled:opacity-50"
+                variant="secondary"
               >
                 复制
-              </button>
+              </Button>
             </div>
           </div>
           <div>
@@ -146,13 +147,13 @@ export default function TimestampPage() {
                 className="flex-1 p-3 border rounded-lg font-mono bg-muted"
                 placeholder="转换后的日期时间"
               />
-              <button
+              <Button
                 onClick={() => copyToClipboard(outputDateTime)}
                 disabled={!outputDateTime}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90 disabled:opacity-50"
+                variant="secondary"
               >
                 复制
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -179,13 +180,13 @@ export default function TimestampPage() {
                 className="flex-1 p-3 border rounded-lg font-mono bg-muted"
                 placeholder="转换后的时间戳"
               />
-              <button
+              <Button
                 onClick={() => copyToClipboard(outputTimestamp)}
                 disabled={!outputTimestamp}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90 disabled:opacity-50"
+                variant="secondary"
               >
                 复制
-              </button>
+              </Button>
             </div>
           </div>
           <div>
@@ -197,13 +198,13 @@ export default function TimestampPage() {
                 readOnly
                 className="flex-1 p-3 border rounded-lg font-mono bg-muted"
               />
-              <button
+              <Button
                 onClick={() => copyToClipboard(outputTimestamp ? (parseInt(outputTimestamp) * 1000).toString() : "")}
                 disabled={!outputTimestamp}
-                className="px-4 py-2 bg-secondary text-secondary-foreground rounded hover:opacity-90 disabled:opacity-50"
+                variant="secondary"
               >
                 复制
-              </button>
+              </Button>
             </div>
           </div>
         </div>

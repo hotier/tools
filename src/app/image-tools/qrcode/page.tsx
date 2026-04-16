@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import QRCode from "qrcode";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
+import { Button } from "@/components/Button";
 
 export default function QRCodePage() {
   useTrackToolUsage("/image-tools/qrcode", "二维码生成");
@@ -62,22 +63,15 @@ export default function QRCodePage() {
             <label className="block text-sm font-medium mb-2">容错级别</label>
             <div className="flex gap-2">
               {(["L", "M", "Q", "H"] as const).map((level) => (
-                <button
+                <Button
                   key={level}
                   onClick={() => setErrorCorrectionLevel(level)}
-                  className={`px-4 py-2 rounded ${
-                    errorCorrectionLevel === level
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
-                  }`}
+                  variant={errorCorrectionLevel === level ? "primary" : "secondary"}
                 >
                   {level}
-                </button>
+                </Button>
               ))}
             </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              L: 7% | M: 15% | Q: 25% | H: 30% 可恢复
-            </p>
           </div>
         </div>
 
@@ -92,12 +86,13 @@ export default function QRCodePage() {
             )}
           </div>
           {qrDataUrl && (
-            <button
+            <Button
               onClick={downloadQR}
-              className="mt-4 px-6 py-2 bg-primary text-primary-foreground rounded hover:opacity-90"
+              variant="primary"
+              className="mt-4"
             >
               下载二维码
-            </button>
+            </Button>
           )}
         </div>
       </div>
