@@ -137,14 +137,18 @@ const md = new MarkdownIt({
   linkify: true,
   typographer: true,
   highlight: function (str: string, lang: string): string {
+    const langLabel = lang && hljs.getLanguage(lang) 
+      ? `<span class="code-lang">${lang}</span>` 
+      : '';
+    
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+        return `<pre class="hljs relative">${langLabel}<code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
       } catch {
         // ignore
       }
     }
-    return `<pre class="hljs"><code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`;
+    return `<pre class="hljs relative">${langLabel}<code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`;
   },
 });
 

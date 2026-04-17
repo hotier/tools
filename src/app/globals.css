@@ -278,6 +278,18 @@ code {
   background-color: var(--muted);
 }
 
+.code-lang {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background-color: rgba(51, 65, 85, 0.5);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  z-index: 10;
+}
+
 .markdown-alert {
   padding: 0.5rem 1rem;
   margin-bottom: 1rem;
