@@ -4,6 +4,14 @@ export const APP_VERSION = VERSION;
 
 export const VERSION_HISTORY = [
   {
+    version: "0.3.1",
+    date: "2026-04-17",
+    changes: [
+      "完善版本管理文档",
+      "在首页标题添加版本号显示",
+    ],
+  },
+  {
     version: "0.3.0",
     date: "2026-04-17",
     changes: [
