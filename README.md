@@ -83,10 +83,45 @@ npm run start
 
 ## 🔄 版本管理
 
-本项目使用 **Changesets** 实现一站式版本管理，全链路打通：
-**功能→变更→版本→发布→更新→回滚**
+本项目使用 **Changesets + GitHub Actions + Vercel** 实现自动化版本发布流程，全链路打通：
+**开发→变更→release分支→自动版本更新→main分支→Vercel部署**
 
-### 📋 日常操作 SOP（4 步完成发布）
+### 🚀 自动化发布流程（推荐）
+
+通过 GitHub Actions 实现完全自动化的版本管理和部署：
+
+```bash
+# 1️⃣ 日常开发（可以在main分支或任意分支）
+git checkout main
+# ... 编写代码 ...
+
+# 2️⃣ 准备发布：切换到release分支，合并你的代码
+git checkout release
+git merge main  # 或 cherry-pick 需要发布的commit
+
+# 3️⃣ 记录功能变更
+npx changeset
+# 选择变更类型，输入功能描述
+
+# 4️⃣ 推送到release分支，触发自动化流程
+git add .
+git commit -m "你的提交信息"
+git push origin release
+```
+
+**自动化流程会自动完成：**
+- ✅ 合并release分支到main分支（带原始提交信息）
+- ✅ 运行 `changeset version` 更新版本号和CHANGELOG
+- ✅ 提交并推送到main分支
+- ✅ 触发Vercel自动部署（只有main分支会触发）
+
+### ⚙️ 自动化流程配置
+
+- **GitHub Actions Workflow**: `.github/workflows/release.yml`
+- **Vercel配置**: `vercel.json` - 只允许main分支部署
+- **避免循环部署**: Vercel只监听main分支，workflow推送到release分支不会触发部署
+
+### 📋 传统手动发布 SOP（4 步完成发布）
 
 ```bash
 # 1️⃣ 开发功能
