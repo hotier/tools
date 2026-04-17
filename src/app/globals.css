@@ -278,6 +278,11 @@ code {
   background-color: var(--muted);
 }
 
+.prose blockquote p::before,
+.prose blockquote p::after {
+  content: none;
+}
+
 .code-lang {
   position: absolute;
   top: 0.5rem;
