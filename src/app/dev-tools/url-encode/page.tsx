@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function UrlEncodePage() {
   useTrackToolUsage("/dev-tools/url-encode", "URL 编解码");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [mode, setMode] = useState<"encode" | "decode">("encode");
@@ -75,7 +75,7 @@ export default function UrlEncodePage() {
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(output);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const loadSampleData = () => {
@@ -86,18 +86,22 @@ export default function UrlEncodePage() {
     <ToolPageLayout title="URL 编解码" href="/dev-tools/url-encode">
       <div className="mb-4 flex items-center gap-4 flex-wrap">
         <div className="flex rounded-lg border overflow-hidden">
-          <button
+          <Button
             onClick={() => setMode("encode")}
-            className={`px-4 py-2 text-sm ${mode === "encode" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+            variant="tab"
+            size="sm"
+            className={mode === "encode" ? "!bg-primary !text-primary-foreground rounded-none border-transparent rounded-l-lg focus:ring-0" : "rounded-none border-transparent rounded-l-lg focus:ring-0"}
           >
             编码
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setMode("decode")}
-            className={`px-4 py-2 text-sm ${mode === "decode" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+            variant="tab"
+            size="sm"
+            className={mode === "decode" ? "!bg-primary !text-primary-foreground rounded-none border-transparent rounded-r-lg focus:ring-0" : "rounded-none border-transparent rounded-r-lg focus:ring-0"}
           >
             解码
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -144,7 +148,7 @@ export default function UrlEncodePage() {
       <div className="flex flex-wrap gap-2 justify-center">
         <Button
           onClick={handleConvert}
-          variant="primary"
+          variant="info"
           disabled={!input}
         >
           {mode === "encode" ? "编码" : "解码"}
@@ -166,7 +170,7 @@ export default function UrlEncodePage() {
             setInput("");
             setOutput("");
           }}
-          variant="danger"
+          variant="destructive"
           disabled={!input}
         >
           清空

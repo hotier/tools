@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { CustomSelect } from "@/components/CustomSelect";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const units: Record<string, { name: string; toBase: (v: number) => number; fromBase: (v: number) => number }[]> = {
   length: [
@@ -130,7 +131,7 @@ export default function UnitConverterPage() {
         <label className="block text-sm font-medium mb-2">选择类型</label>
         <div className="flex flex-wrap gap-2">
           {(Object.keys(units) as Category[]).map((cat) => (
-            <button
+            <Button
               key={cat}
               onClick={() => {
                 setCategory(cat);
@@ -143,10 +144,11 @@ export default function UnitConverterPage() {
                   setToValue("");
                 }
               }}
-              className={`px-4 py-2 rounded ${category === cat ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+              variant={category === cat ? "default" : "secondary"}
+              size="sm"
             >
               {categoryNames[cat]}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -155,57 +157,61 @@ export default function UnitConverterPage() {
         <div className="flex flex-col md:flex-row items-end gap-6">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-2">从</label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 items-end">
               <input
                 type="number"
                 value={fromValue}
                 onChange={(e) => handleFromChange(e.target.value)}
-                className="flex-1 p-3 border rounded-lg bg-background"
+                className="flex-1 h-10 p-2 border rounded-lg bg-background"
               />
-              <select
-                value={fromUnit}
-                onChange={(e) => handleFromUnitChange(Number(e.target.value))}
-                className="w-full sm:w-32 p-3 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                {units[category].map((unit, i) => (
-                  <option key={i} value={i}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={fromUnit.toString()} onValueChange={(value) => handleFromUnitChange(Number(value))}>
+                <SelectTrigger className="w-full sm:w-32 !h-10">
+                  <SelectValue placeholder="选择单位" />
+                </SelectTrigger>
+                <SelectContent>
+                  {units[category].map((unit, i) => (
+                    <SelectItem key={i} value={i.toString()}>
+                      {unit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <button
+          <Button
             onClick={swapUnits}
-            className="w-12 h-12 rounded-full border hover:bg-secondary/50 transition-colors duration-200 flex items-center justify-center flex-shrink-0"
+            variant="outline"
+            size="icon"
+            className="flex-shrink-0 !h-10 !w-10"
             aria-label="交换单位"
           >
-            <svg t="1776436833516" className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2652" width="20" height="20">
+            <svg className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2652" width="20" height="20">
               <path d="M112 512c0-40.96 6.4-81.92 19.2-122.24a397.504 397.504 0 0 1 197.76-233.6 398.72 398.72 0 0 1 305.28-25.6c51.2 16.64 97.28 42.88 136.96 76.8H704c-26.24 0-48 21.76-48 48s21.76 48 48 48h192c26.24 0 48-21.76 48-48V64c0-26.24-21.76-48-48-48s-48 21.76-48 48v83.2c-53.12-49.28-115.2-85.12-184.96-107.52C537.6 0 403.2 10.24 285.44 71.04S80 234.88 39.68 360.96C23.68 410.24 16 460.8 16 512c0 26.24 21.76 48 48 48s48-21.76 48-48zM1002.88 440.96a47.424 47.424 0 0 0-54.4-40.32c-26.24 3.84-44.16 28.16-40.32 54.4 8.96 60.16 3.84 120.32-15.36 179.2a397.504 397.504 0 0 1-197.76 233.6 398.72 398.72 0 0 1-305.28 25.6 396.16 396.16 0 0 1-136.96-76.8H320c26.24 0 48-21.76 48-48s-21.76-48-48-48H128c-26.24 0-48 21.76-48 48v192c0 26.24 21.76 48 48 48s48-21.76 48-48v-83.2c53.12 49.28 115.2 85.12 184.96 107.52 49.92 16 101.12 23.68 151.68 23.68 78.08 0 154.88-18.56 226.56-55.04a491.52 491.52 0 0 0 245.12-289.92c23.04-72.32 29.44-147.2 18.56-222.08z" p-id="2653"></path>
             </svg>
-          </button>
+          </Button>
 
           <div className="flex-1">
             <label className="block text-sm font-medium mb-2">到</label>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 items-end">
               <input
                 type="text"
                 value={toValue}
                 readOnly
-                className="flex-1 p-3 border rounded-lg bg-muted"
+                className="flex-1 h-10 p-2 border rounded-lg bg-muted"
               />
-              <select
-                value={toUnit}
-                onChange={(e) => handleToUnitChange(Number(e.target.value))}
-                className="w-full sm:w-32 p-3 border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-              >
-                {units[category].map((unit, i) => (
-                  <option key={i} value={i}>
-                    {unit.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={toUnit.toString()} onValueChange={(value) => handleToUnitChange(Number(value))}>
+                <SelectTrigger className="w-full sm:w-32 !h-10">
+                  <SelectValue placeholder="选择单位" />
+                </SelectTrigger>
+                <SelectContent>
+                  {units[category].map((unit, i) => (
+                    <SelectItem key={i} value={i.toString()}>
+                      {unit.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>

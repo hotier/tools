@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function TimestampPage() {
   useTrackToolUsage("/converters/timestamp", "时间戳转换");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [currentTimestamp, setCurrentTimestamp] = useState(0);
   const [inputTimestamp, setInputTimestamp] = useState("");
   const [inputDateTime, setInputDateTime] = useState("");
@@ -96,7 +96,7 @@ export default function TimestampPage() {
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   return (
@@ -121,12 +121,13 @@ export default function TimestampPage() {
                 type="text"
                 value={inputTimestamp}
                 onChange={(e) => handleTimestampChange(e.target.value)}
-                className="flex-1 p-3 border rounded-lg font-mono bg-background"
+                className="flex-1 p-2 border rounded-lg font-mono bg-background"
                 placeholder="输入秒级时间戳"
               />
               <Button
                 onClick={useCurrentTimestamp}
-                variant="primary"
+                variant="default"
+                size="input-match"
               >
                 当前
               </Button>
@@ -139,13 +140,14 @@ export default function TimestampPage() {
                 type="text"
                 value={outputDateTime}
                 readOnly
-                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+                className="flex-1 p-2 border rounded-lg font-mono bg-muted"
                 placeholder="转换后的日期时间"
               />
               <Button
                 onClick={() => copyToClipboard(outputDateTime)}
                 disabled={!outputDateTime}
-                variant={outputDateTime ? "success" : "secondary"}
+                variant="success"
+                size="input-match"
               >
                 复制
               </Button>
@@ -158,12 +160,13 @@ export default function TimestampPage() {
                 type="text"
                 value={inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : ""}
                 readOnly
-                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+                className="flex-1 p-2 border rounded-lg font-mono bg-muted"
               />
               <Button
                 onClick={() => copyToClipboard(inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : "")}
                 disabled={!inputTimestamp}
-                variant={inputTimestamp ? "success" : "secondary"}
+                variant="success"
+                size="input-match"
               >
                 复制
               </Button>
@@ -180,12 +183,13 @@ export default function TimestampPage() {
                 type="text"
                 value={inputDateTime}
                 onChange={(e) => handleDateTimeChange(e.target.value)}
-                className="flex-1 p-3 border rounded-lg font-mono bg-background"
+                className="flex-1 p-2 border rounded-lg font-mono bg-background"
                 placeholder="格式: 2024-01-01 12:00:00"
               />
               <Button
                 onClick={useCurrentDateTime}
-                variant="primary"
+                variant="default"
+                size="input-match"
               >
                 当前
               </Button>
@@ -198,13 +202,14 @@ export default function TimestampPage() {
                 type="text"
                 value={outputTimestamp}
                 readOnly
-                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+                className="flex-1 p-2 border rounded-lg font-mono bg-muted"
                 placeholder="转换后的时间戳"
               />
               <Button
                 onClick={() => copyToClipboard(outputTimestamp)}
                 disabled={!outputTimestamp}
-                variant={outputTimestamp ? "success" : "secondary"}
+                variant="success"
+                size="input-match"
               >
                 复制
               </Button>
@@ -217,12 +222,13 @@ export default function TimestampPage() {
                 type="text"
                 value={outputTimestamp ? (parseInt(outputTimestamp) * 1000).toString() : ""}
                 readOnly
-                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+                className="flex-1 p-2 border rounded-lg font-mono bg-muted"
               />
               <Button
                 onClick={() => copyToClipboard(outputTimestamp ? (parseInt(outputTimestamp) * 1000).toString() : "")}
                 disabled={!outputTimestamp}
-                variant={outputTimestamp ? "success" : "secondary"}
+                variant="success"
+                size="input-match"
               >
                 复制
               </Button>

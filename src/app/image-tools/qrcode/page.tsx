@@ -4,31 +4,38 @@ import { useState, useEffect } from "react";
 import QRCode from "qrcode";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/button";
 
 export default function QRCodePage() {
   useTrackToolUsage("/image-tools/qrcode", "二维码生成");
   const [text, setText] = useState("https://example.com");
   const [qrDataUrl, setQrDataUrl] = useState("");
-  const [size, setSize] = useState(256);
+  const [previewSize] = useState(224);
+  const [downloadSize, setDownloadSize] = useState(256);
   const [errorCorrectionLevel, setErrorCorrectionLevel] = useState<"L" | "M" | "Q" | "H">("M");
 
   useEffect(() => {
     if (text) {
       QRCode.toDataURL(text, {
-        width: size,
+        width: previewSize,
         errorCorrectionLevel,
         margin: 2,
       })
         .then(setQrDataUrl)
         .catch(console.error);
     }
-  }, [text, size, errorCorrectionLevel]);
+  }, [text, previewSize, errorCorrectionLevel]);
 
-  const downloadQR = () => {
+  const downloadQR = async () => {
+    const fullSizeUrl = await QRCode.toDataURL(text, {
+      width: downloadSize,
+      errorCorrectionLevel,
+      margin: 2,
+    });
+    const timestamp = Math.floor(Date.now() / 1000);
     const link = document.createElement("a");
-    link.download = "qrcode.png";
-    link.href = qrDataUrl;
+    link.download = `qrcode_${timestamp}_${downloadSize}.png`;
+    link.href = fullSizeUrl;
     link.click();
   };
 
@@ -47,14 +54,14 @@ export default function QRCodePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">尺寸: {size}px</label>
+            <label className="block text-sm font-medium mb-2">下载尺寸: {downloadSize}px</label>
             <input
               type="range"
               min="128"
               max="512"
               step="32"
-              value={size}
-              onChange={(e) => setSize(parseInt(e.target.value))}
+              value={downloadSize}
+              onChange={(e) => setDownloadSize(parseInt(e.target.value))}
               className="w-full"
             />
           </div>
@@ -66,7 +73,7 @@ export default function QRCodePage() {
                 <Button
                   key={level}
                   onClick={() => setErrorCorrectionLevel(level)}
-                  variant={errorCorrectionLevel === level ? "primary" : "secondary"}
+                  variant={errorCorrectionLevel === level ? "info" : "secondary"}
                 >
                   {level}
                 </Button>
@@ -88,7 +95,7 @@ export default function QRCodePage() {
           {qrDataUrl && (
             <Button
               onClick={downloadQR}
-              variant="primary"
+              variant="default"
               className="mt-4"
             >
               下载二维码

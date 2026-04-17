@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function ColorPickerPage() {
   useTrackToolUsage("/converters/color-picker", "颜色选择器");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [hex, setHex] = useState("#3b82f6");
   const [rgb, setRgb] = useState({ r: 59, g: 130, b: 246 });
   const [hsl, setHsl] = useState({ h: 217, s: 91, l: 60 });
@@ -121,99 +122,171 @@ export default function ColorPickerPage() {
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
-    showToast("复制成功");
+    toast.success("复制成功");
+  };
+
+  const handleEyedropperClick = async () => {
+    if (!("EyeDropper" in window)) {
+      toast.error("您的浏览器不支持取色器功能");
+      return;
+    }
+    try {
+      const eyeDropper = new (window as unknown as { EyeDropper: new () => { open: () => Promise<{ sRGBHex: string }> } }).EyeDropper();
+      const result = await eyeDropper.open();
+      handleHexChange(result.sRGBHex);
+      toast.success("已获取颜色");
+    } catch {
+      // user cancelled
+    }
   };
 
   return (
     <ToolPageLayout title="颜色选择器" href="/converters/color-picker">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <div
-            className="w-full h-48 rounded-lg border mb-6"
-            style={{ backgroundColor: hex }}
-          />
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">选择颜色</label>
-            <input
-              type="color"
-              value={hex}
-              onChange={(e) => handleHexChange(e.target.value)}
-              className="w-full h-12 cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium">HEX</label>
-              <button
-                onClick={() => copyToClipboard(hex)}
-                className="text-sm text-primary hover:underline"
-              >
-                复制
-              </button>
+      <div className="border rounded-lg p-6">
+        <div className="space-y-4">
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <div className="text-sm font-medium mb-2">颜色预览</div>
+              <div className="flex gap-2">
+                <div
+                  className="flex-1 h-10 rounded-lg border"
+                  style={{ backgroundColor: hex }}
+                />
+                <div className="w-10 h-10 rounded-lg border flex flex-col overflow-hidden">
+                  <div className="flex-1 bg-white"></div>
+                  <div className="flex-1 bg-gray-200"></div>
+                  <div className="flex-1 bg-gray-800"></div>
+                </div>
+              </div>
             </div>
-            <input
-              type="text"
-              value={hex}
-              onChange={(e) => handleHexChange(e.target.value)}
-              className="w-full p-3 border rounded-lg font-mono bg-background"
-            />
+            <div className="flex-1">
+              <div className="text-sm font-medium mb-2">HEX</div>
+              <div className="flex gap-2 items-end">
+                <div className="grid grid-cols-3 gap-2 flex-1">
+                  <div className="col-span-3">
+                    <input
+                      type="text"
+                      value={hex}
+                      onChange={(e) => handleHexChange(e.target.value)}
+                      className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={() => copyToClipboard(hex)}
+                  variant="success"
+                  size="input-match"
+                >
+                  复制
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium">RGB</label>
-              <button
-                onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
-                className="text-sm text-primary hover:underline"
-              >
-                复制
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {(["r", "g", "b"] as const).map((key) => (
-                <div key={key}>
-                  <div className="text-xs text-muted-foreground mb-1 uppercase">{key}</div>
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <div className="text-sm font-medium mb-2">颜色选择器</div>
+              <div className="flex gap-2 items-end">
+                <div className="relative flex-1 h-10 group cursor-pointer">
                   <input
-                    type="number"
-                    min="0"
-                    max="255"
-                    value={rgb[key]}
-                    onChange={(e) => handleRgbChange(key, parseInt(e.target.value) || 0)}
-                    className="w-full p-2 border rounded-lg bg-background"
+                    type="color"
+                    value={hex}
+                    onChange={(e) => handleHexChange(e.target.value)}
+                    className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+                  />
+                  <div
+                    className="absolute inset-0 rounded-lg pointer-events-none border"
+                    style={{ backgroundColor: hex }}
                   />
                 </div>
-              ))}
+                <button
+                  onClick={handleEyedropperClick}
+                  className="w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer text-foreground hover:bg-accent"
+                  title="取色器"
+                >
+                  <svg className="w-5 h-5" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M988.16 92.16L926.72 30.72c-40.96-40.96-102.4-40.96-143.36 0l-143.36 143.36L573.44 102.4 440.32 240.64l56.32 56.32-389.12 394.24c-25.6 25.6-40.96 61.44-40.96 92.16l-20.48 20.48c-46.08 51.2-46.08 128 0 179.2 20.48 25.6 51.2 40.96 81.92 40.96s66.56-15.36 87.04-35.84l20.48-20.48c35.84 0 66.56-15.36 92.16-40.96l389.12-394.24 56.32 56.32 138.24-138.24-66.56-71.68 143.36-143.36c40.96-40.96 40.96-102.4 0-143.36m-716.8 768c-10.24 10.24-25.6 15.36-35.84 15.36-10.24 0-15.36 0-25.6-5.12L153.6 921.6c-5.12 5.12-15.36 10.24-25.6 10.24s-20.48-5.12-25.6-10.24c-15.36-15.36-15.36-35.84 0-51.2l56.32-51.2c-10.24-20.48-5.12-46.08 10.24-61.44l389.12-394.24 102.4 102.4-389.12 394.24z m0 0" fill="currentColor" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex gap-2 items-end">
+                <div className="grid grid-cols-3 gap-2 flex-1">
+                  {(["R", "G", "B"] as const).map((key) => {
+                    const lowerKey = key.toLowerCase() as "r" | "g" | "b";
+                    return (
+                      <div key={key} className="flex flex-col">
+                        <div className="text-sm font-medium mb-2">{key}</div>
+                        <input
+                          type="number"
+                          min="0"
+                          max="255"
+                          value={rgb[lowerKey]}
+                          onChange={(e) => handleRgbChange(lowerKey, parseInt(e.target.value) || 0)}
+                          className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+                <Button
+                  onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
+                  variant="success"
+                  size="input-match"
+                >
+                  复制
+                </Button>
+              </div>
             </div>
           </div>
 
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="text-sm font-medium">HSL</label>
-              <button
-                onClick={() => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`)}
-                className="text-sm text-primary hover:underline"
-              >
-                复制
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {(["h", "s", "l"] as const).map((key) => (
-                <div key={key}>
-                  <div className="text-xs text-muted-foreground mb-1 uppercase">{key}</div>
-                  <input
-                    type="number"
-                    min="0"
-                    max={key === "h" ? 360 : 100}
-                    value={hsl[key]}
-                    onChange={(e) => handleHslChange(key, parseInt(e.target.value) || 0)}
-                    className="w-full p-2 border rounded-lg bg-background"
+          <div className="flex gap-6">
+            <div className="flex-1">
+              <div className="text-sm font-medium mb-2">常用颜色</div>
+              <div className="h-10 flex gap-0">
+                {[
+                  "#ef4444", "#f87171", "#f97316", "#fb923c", "#eab308", "#84cc16", "#22c55e", "#4ade80", "#14b8a6",
+                  "#06b6d4", "#22d3ee", "#3b82f6", "#60a5fa", "#8b5cf6", "#a78bfa", "#78716c", "#000000"
+                ].map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => handleHexChange(color)}
+                    className="w-10 h-10 border hover:scale-125 transition-transform flex-shrink-0"
+                    style={{ backgroundColor: color }}
+                    title={color}
                   />
+                ))}
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex gap-2 items-end">
+                <div className="grid grid-cols-3 gap-2 flex-1">
+                  {(["H", "S", "L"] as const).map((key) => {
+                    const lowerKey = key.toLowerCase() as "h" | "s" | "l";
+                    return (
+                      <div key={key} className="flex flex-col">
+                        <div className="text-sm font-medium mb-2">{key}</div>
+                        <input
+                          type="number"
+                          min="0"
+                          max={lowerKey === "h" ? 360 : 100}
+                          value={hsl[lowerKey]}
+                          onChange={(e) => handleHslChange(lowerKey, parseInt(e.target.value) || 0)}
+                          className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+                <Button
+                  onClick={() => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`)}
+                  variant="success"
+                  size="input-match"
+                >
+                  复制
+                </Button>
+              </div>
             </div>
           </div>
         </div>

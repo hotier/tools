@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function JsonFormatterPage() {
   useTrackToolUsage("/dev-tools/json-formatter", "JSON 格式化");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -93,38 +94,41 @@ export default function JsonFormatterPage() {
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(output);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   return (
     <ToolPageLayout title="JSON 格式化" href="/dev-tools/json-formatter">
       <div className="mb-4 flex items-center gap-4 flex-wrap">
         <div className="flex rounded-lg border overflow-hidden">
-          <button
+          <Button
             onClick={() => setMode("format")}
-            className={`px-4 py-2 text-sm ${mode === "format" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+            variant="tab"
+            size="sm"
+            className={mode === "format" ? "!bg-primary !text-primary-foreground rounded-none border-0 rounded-l-lg" : "rounded-none border-0 rounded-l-lg"}
           >
             格式化
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setMode("minify")}
-            className={`px-4 py-2 text-sm ${mode === "minify" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
+            variant="tab"
+            size="sm"
+            className={mode === "minify" ? "!bg-primary !text-primary-foreground rounded-none border-0 rounded-r-lg" : "rounded-none border-0 rounded-r-lg"}
           >
             压缩
-          </button>
+          </Button>
         </div>
-        <div className="flex rounded-lg border overflow-hidden">
-          <span className="px-2 py-2 text-sm bg-secondary">缩进空格数:</span>
-          <div className="border-l">
-            <select
-              value={indent}
-              onChange={(e) => setIndent(Number(e.target.value))}
-              className="border-0 px-2 py-2 bg-background text-sm focus:outline-none"
-            >
-              <option value={2}>2</option>
-              <option value={4}>4</option>
-            </select>
-          </div>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">缩进空格数</span>
+          <Select value={indent.toString()} onValueChange={(value) => setIndent(Number(value))}>
+            <SelectTrigger className="w-20 h-7">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectItem value="2">2</SelectItem>
+              <SelectItem value="4">4</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -157,7 +161,7 @@ export default function JsonFormatterPage() {
       <div className="flex flex-wrap gap-2 justify-center">
         <Button
           onClick={handleProcess}
-          variant="primary"
+          variant="info"
           disabled={!input}
         >
           转换
@@ -180,7 +184,7 @@ export default function JsonFormatterPage() {
             setOutput("");
             setError("");
           }}
-          variant="danger"
+          variant="destructive"
           disabled={!input}
         >
           清空

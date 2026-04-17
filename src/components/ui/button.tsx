@@ -9,16 +9,33 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        // 蓝色按钮 - 默认操作
+        default: "bg-blue-100 border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white active:bg-blue-700",
+        // 蓝色边框透明按钮 - 次要操作，悬停显示蓝色
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border border-gray-300 bg-transparent hover:bg-blue-100 hover:text-blue-700 hover:border-blue-300 active:bg-blue-200",
+        // 灰色按钮 - 示例数据/加载示例
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-gray-100 border border-gray-300 text-gray-700 hover:bg-blue-100 hover:text-blue-700 hover:border-blue-300 active:bg-blue-200",
+        // 透明按钮 - 幽灵按钮
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "bg-transparent hover:bg-blue-100 hover:text-blue-700 active:bg-blue-200",
+        // 红色按钮 - 危险操作/清空
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-red-100 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white active:bg-red-700",
+        // 黄色按钮 - 警告操作
+        warning:
+          "bg-yellow-100 border border-yellow-200 text-yellow-700 hover:bg-yellow-600 hover:text-white active:bg-yellow-700",
+        // 绿色按钮 - 成功/复制结果
+        success:
+          "bg-green-100 border border-green-200 text-green-500 hover:bg-green-500 hover:text-white active:bg-green-600",
+        // 蓝色信息按钮
+        info:
+          "bg-blue-100 border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white active:bg-blue-700",
+        // 链接样式
+        link: "text-primary underline-offset-4 hover:underline hover:bg-primary/10 active:bg-primary/20",
+        // Tab 标签样式 - 选中时蓝色背景，未选中时灰色背景悬停变蓝
+        tab: "bg-secondary text-secondary-foreground hover:bg-primary/10 data-[state=selected]:bg-primary data-[state=selected]:text-primary-foreground",
       },
       size: {
         default:
@@ -26,6 +43,7 @@ const buttonVariants = cva(
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        "input-match": "h-10 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         icon: "size-8",
         "icon-xs":
           "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",

@@ -3,12 +3,12 @@
 import { useState, useMemo } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function WordCounterPage() {
   useTrackToolUsage("/text-tools/word-counter", "字数统计");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [text, setText] = useState("");
 
   const stats = useMemo(() => {
@@ -49,7 +49,7 @@ export default function WordCounterPage() {
 单词数：${stats.wordCount}
 段落数：${stats.paragraphCount}`;
     await navigator.clipboard.writeText(statsText);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const loadSampleData = () => {
@@ -140,7 +140,7 @@ The quick brown fox jumps over the lazy dog.
         >
           {text ? "复制结果" : "示例数据"}
         </Button>
-        <Button onClick={() => setText("")} variant="danger" disabled={!text}>
+        <Button onClick={() => setText("")} variant="destructive" disabled={!text}>
           清空
         </Button>
       </div>

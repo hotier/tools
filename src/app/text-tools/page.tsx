@@ -1,6 +1,6 @@
 import Link from "next/link";
 import tools from "@/data/tools";
-import { extractShortDescription } from "@/components/SidebarContext";
+import { extractShortDescription } from "@/lib/utils";
 
 const categoryTools = tools.find((cat) => cat.category === "文本编辑");
 

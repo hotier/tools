@@ -3,8 +3,9 @@
 import { useState, useMemo, useRef } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button, FileInputButton } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { FileInputButton } from "@/components/ui/file-input-button";
 
 interface ParsedInterval {
   original: string;
@@ -439,7 +440,7 @@ function parseSingleInterval(
 
 export default function IntervalParserPage() {
   useTrackToolUsage("/converters/interval-parser", "区间解析");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [precision, setPrecision] = useState(3);
   const [customLower, setCustomLower] = useState<string>("");
@@ -462,12 +463,12 @@ export default function IntervalParserPage() {
 
   const copyToClipboard = async (text: string) => {
     await navigator.clipboard.writeText(text);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const exportTxt = () => {
     if (validResults.length === 0) {
-      showToast("没有可导出的数据", "error");
+      toast.error("没有可导出的数据");
       return;
     }
 
@@ -483,12 +484,12 @@ export default function IntervalParserPage() {
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
-    showToast("导出成功");
+    toast.success("导出成功");
   };
 
   const exportExcel = async () => {
     if (validResults.length === 0) {
-      showToast("没有可导出的数据", "error");
+      toast.error("没有可导出的数据");
       return;
     }
 
@@ -507,7 +508,7 @@ export default function IntervalParserPage() {
     XLSX.utils.book_append_sheet(wb, ws, "区间解析结果");
     const timestamp = Math.floor(Date.now() / 1000);
     XLSX.writeFile(wb, `interval_${timestamp}.xlsx`);
-    showToast("导出成功");
+    toast.success("导出成功");
   };
 
   const handleFileImport = async (file: File) => {
@@ -520,7 +521,7 @@ export default function IntervalParserPage() {
       reader.onload = (event) => {
         const content = event.target?.result as string;
         setInput(content);
-        showToast("导入成功");
+        toast.success("导入成功");
       };
       reader.readAsText(file);
     } else if (extension === "xlsx" || extension === "xls") {
@@ -540,14 +541,14 @@ export default function IntervalParserPage() {
             .join("\n");
 
           setInput(expressions);
-          showToast("导入成功");
+          toast.success("导入成功");
         } catch {
-          showToast("导入失败，请检查文件格式", "error");
+          toast.error("导入失败，请检查文件格式");
         }
       };
       reader.readAsBinaryString(file);
     } else {
-      showToast("不支持的文件格式", "error");
+      toast.error("不支持的文件格式");
     }
   };
 
@@ -697,14 +698,14 @@ export default function IntervalParserPage() {
           </Button>
           <Button
             onClick={exportTxt}
-            variant="warning"
+            variant="secondary"
             disabled={!input || validResults.length === 0}
           >
             导出 TXT
           </Button>
           <Button
             onClick={exportExcel}
-            variant="warning"
+            variant="secondary"
             disabled={!input || validResults.length === 0}
           >
             导出 Excel
@@ -715,7 +716,7 @@ export default function IntervalParserPage() {
               setCustomLower("");
               setCustomUpper("");
             }}
-            variant="danger"
+            variant="destructive"
             disabled={!input}
           >
             清空

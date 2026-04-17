@@ -6,7 +6,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { SettingsProvider } from "@/components/SettingsContext";
 import { SearchProvider } from "@/components/SearchContext";
 import { RecentToolsProvider } from "@/components/RecentToolsContext";
-import { ToastProvider } from "@/components/ToastContext";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Footer } from "@/components/layout/Footer";
@@ -44,23 +43,21 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider>
       <SettingsProvider>
-        <ToastProvider>
-          <SearchProvider>
-            <RecentToolsProvider>
-              <SidebarProvider>
-                <Header />
-                <div className="flex flex-1">
-                  <Sidebar />
-                  <div className="flex-1 flex flex-col">
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                  </div>
+        <SearchProvider>
+          <RecentToolsProvider>
+            <SidebarProvider>
+              <Header />
+              <div className="flex flex-1">
+                <Sidebar />
+                <div className="flex-1 flex flex-col">
+                  <main className="flex-1">{children}</main>
+                  <Footer />
                 </div>
-                <UpdateChecker />
-              </SidebarProvider>
-            </RecentToolsProvider>
-          </SearchProvider>
-        </ToastProvider>
+              </div>
+              <UpdateChecker />
+            </SidebarProvider>
+          </RecentToolsProvider>
+        </SearchProvider>
       </SettingsProvider>
     </ThemeProvider>
   );

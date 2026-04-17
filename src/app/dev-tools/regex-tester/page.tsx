@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { Button } from "@/components/Button";
+import { Button } from "@/components/ui/button";
 
 export default function RegexTesterPage() {
   useTrackToolUsage("/dev-tools/regex-tester", "正则测试");
@@ -127,13 +127,13 @@ export default function RegexTesterPage() {
       <div className="flex flex-wrap gap-2 justify-center">
         <Button
           onClick={loadSampleData}
-          variant="secondary"
+          variant="outline"
         >
           示例数据
         </Button>
         <Button
           onClick={clearAll}
-          variant="danger"
+          variant="destructive"
           disabled={!pattern && !testString}
         >
           清空

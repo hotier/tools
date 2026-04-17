@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 type HashAlgorithm = "MD5" | "SHA-1" | "SHA-256" | "SHA-384" | "SHA-512";
 
@@ -223,7 +223,7 @@ function md5(string: string): string {
 
 export default function HashGeneratorPage() {
   useTrackToolUsage("/dev-tools/hash-generator", "Hash 生成器");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [input, setInput] = useState("");
   const [results, setResults] = useState<HashResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -248,7 +248,7 @@ export default function HashGeneratorPage() {
       }
       setResults(hashResults);
     } catch {
-      showToast("生成失败", "error");
+      toast.error("生成失败");
     } finally {
       setLoading(false);
     }
@@ -256,7 +256,7 @@ export default function HashGeneratorPage() {
 
   const generate = async () => {
     if (!input.trim()) {
-      showToast("请输入内容", "error");
+      toast.error("请输入内容");
       return;
     }
     await generateWithText(input);
@@ -268,17 +268,17 @@ export default function HashGeneratorPage() {
 
   const copyAllHashes = async () => {
     if (results.length === 0) {
-      showToast("没有可复制的内容", "error");
+      toast.error("没有可复制的内容");
       return;
     }
     const text = results.map((r) => `${r.algorithm}: ${r.hash}`).join("\n");
     await navigator.clipboard.writeText(text);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const copyHash = async (hash: string) => {
     await navigator.clipboard.writeText(hash);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   return (
@@ -294,7 +294,7 @@ export default function HashGeneratorPage() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button onClick={generate} variant="primary" disabled={loading || !input}>
+        <Button onClick={generate} variant="info" disabled={loading || !input}>
           {loading ? "计算中..." : "生成"}
         </Button>
         <Button
@@ -314,7 +314,7 @@ export default function HashGeneratorPage() {
             setInput("");
             setResults([]);
           }}
-          variant="danger"
+          variant="destructive"
           disabled={!input}
         >
           清空
@@ -337,12 +337,13 @@ export default function HashGeneratorPage() {
                   <td className="px-4 py-3 font-medium">{result.algorithm}</td>
                   <td className="px-4 py-3 font-mono text-xs break-all">{result.hash}</td>
                   <td className="px-4 py-3 text-center">
-                    <button
+                    <Button
                       onClick={() => copyHash(result.hash)}
-                      className="text-primary hover:underline text-sm"
+                      variant="success"
+                      size="sm"
                     >
                       复制
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

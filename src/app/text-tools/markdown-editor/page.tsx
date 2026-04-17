@@ -7,8 +7,8 @@ import markdownItTaskLists from "markdown-it-task-lists";
 import hljs from "highlight.js";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ThemeProvider";
 
 const defaultMarkdown = `# Markdown 编辑器
@@ -158,7 +158,7 @@ md.use(markdownItTaskLists);
 
 export default function MarkdownEditorPage() {
   useTrackToolUsage("/text-tools/markdown-editor", "Markdown 编辑器");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const { resolvedTheme, mounted } = useTheme();
   const [markdown, setMarkdown] = useState("");
   const editorRef = useRef<HTMLTextAreaElement>(null);
@@ -203,7 +203,7 @@ export default function MarkdownEditorPage() {
 
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(markdown);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const loadSampleData = () => {
@@ -212,7 +212,7 @@ export default function MarkdownEditorPage() {
 
   const downloadMarkdown = () => {
     if (!markdown.trim()) {
-      showToast("不能下载空文件", "error");
+      toast.error("不能下载空文件");
       return;
     }
     const timestamp = Math.floor(Date.now() / 1000);
@@ -262,10 +262,10 @@ export default function MarkdownEditorPage() {
         >
           {markdown ? "复制内容" : "示例数据"}
         </Button>
-        <Button onClick={downloadMarkdown} variant="primary" disabled={!markdown}>
+        <Button onClick={downloadMarkdown} variant="info" disabled={!markdown}>
           下载
         </Button>
-        <Button onClick={() => setMarkdown("")} variant="danger" disabled={!markdown}>
+        <Button onClick={() => setMarkdown("")} variant="destructive" disabled={!markdown}>
           清空
         </Button>
       </div>

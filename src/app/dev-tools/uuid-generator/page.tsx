@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
-import { useToast } from "@/components/ToastContext";
-import { Button } from "@/components/Button";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 
 export default function UUIDGeneratorPage() {
   useTrackToolUsage("/dev-tools/uuid-generator", "UUID 生成器");
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [uuids, setUuids] = useState<string[]>([]);
   const [rawUuids, setRawUuids] = useState<string[]>([]);
   const [count, setCount] = useState(5);
@@ -59,16 +59,16 @@ export default function UUIDGeneratorPage() {
 
   const copyAll = async () => {
     if (uuids.length === 0) {
-      showToast("没有可复制的内容", "error");
+      toast.error("没有可复制的内容");
       return;
     }
     await navigator.clipboard.writeText(uuids.join("\n"));
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   const copySingle = async (uuid: string) => {
     await navigator.clipboard.writeText(uuid);
-    showToast("复制成功");
+    toast.success("复制成功");
   };
 
   return (
@@ -108,13 +108,13 @@ export default function UUIDGeneratorPage() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button onClick={generate} variant="primary">
+        <Button onClick={generate} variant="info">
           生成
         </Button>
         <Button onClick={copyAll} variant="success" disabled={uuids.length === 0}>
           复制全部
         </Button>
-        <Button onClick={() => setUuids([])} variant="danger" disabled={uuids.length === 0}>
+        <Button onClick={() => setUuids([])} variant="destructive" disabled={uuids.length === 0}>
           清空
         </Button>
       </div>
@@ -136,12 +136,13 @@ export default function UUIDGeneratorPage() {
                     <td className="px-4 py-3 text-muted-foreground">{index + 1}</td>
                     <td className="px-4 py-3 font-mono">{uuid}</td>
                     <td className="px-4 py-3 text-center">
-                      <button
+                      <Button
                         onClick={() => copySingle(uuid)}
-                        className="text-primary hover:underline text-sm"
+                        variant="success"
+                        size="sm"
                       >
                         复制
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

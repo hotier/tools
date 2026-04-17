@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { ToolDescription } from "./ToolDescription";
+import { Toaster } from "@/components/ui/sonner";
 
 interface ToolPageLayoutProps {
   title: string;
@@ -12,7 +13,7 @@ interface ToolPageLayoutProps {
 
 export function ToolPageLayout({ title, href, children, actions }: ToolPageLayoutProps) {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 relative">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">{title}</h1>
         {actions && <div className="flex gap-2">{actions}</div>}
@@ -23,6 +24,12 @@ export function ToolPageLayout({ title, href, children, actions }: ToolPageLayou
       </div>
 
       <ToolDescription href={href} />
+      
+      <div className="absolute left-1/2 top-1/3 transform -translate-x-1/2 -translate-y-1/2 z-50">
+        <div className="w-auto max-w-[200px]">
+          <Toaster />
+        </div>
+      </div>
     </div>
   );
 }
