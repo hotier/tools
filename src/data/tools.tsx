@@ -13,6 +13,8 @@ const tools: ToolCategory[] = [
       { href: "/dev-tools/base64", label: "Base64 编解码", description: "# 工具简介\nBase64编码与解码工具，支持中文和特殊字符" },
       { href: "/dev-tools/url-encode", label: "URL 编解码", description: "# 工具简介\nURL编码与解码工具，处理特殊字符和中文参数" },
       { href: "/dev-tools/regex-tester", label: "正则测试", description: "# 工具简介\n正则表达式在线测试工具，实时匹配高亮显示。\n\n# 常用标志说明\ng - 全局匹配\ni - 忽略大小写\nm - 多行模式\ns - .匹配换行" },
+      { href: "/dev-tools/uuid-generator", label: "UUID 生成器", description: "# 工具简介\n批量生成 UUID/GUID，支持大写和无连字符格式。\n\n# UUID 说明\nUUID（通用唯一识别码）是 128 位的标识符，通常用于分布式系统中的唯一标识。" },
+      { href: "/dev-tools/hash-generator", label: "Hash 生成器", description: "# 工具简介\n计算文本的哈希值，支持 MD5、SHA-1、SHA-256、SHA-384、SHA-512 算法。\n\n# 算法说明\nMD5: 128位，已不推荐用于安全场景\nSHA-1: 160位，已不推荐用于安全场景\nSHA-256/384/512: 属于 SHA-2 系列，安全性较高" },
     ],
   },
   {
@@ -49,6 +51,7 @@ const tools: ToolCategory[] = [
     ),
     items: [
       { href: "/text-tools/markdown-editor", label: "Markdown 编辑器", description: "# 工具简介\n在线Markdown编辑器，支持实时预览和GFM语法。\n\n# 功能特点\n- 实时预览：编辑时同步渲染预览效果\n- GFM支持：表格、任务列表、删除线等\n- 代码高亮：支持多种编程语言语法高亮\n- GitHub Alerts：支持 NOTE、TIP、IMPORTANT、WARNING、CAUTION 提示框\n- 滚动同步：编辑区与预览区滚动联动\n- 导出下载：支持导出为 .md 文件" },
+      { href: "/text-tools/word-counter", label: "字数统计", description: "# 工具简介\n文本字数统计工具，实时计算字符数、单词数、行数等。\n\n# 统计项目\n- 字符数（含/不含空格）\n- 中文字数、英文字母、数字字符、标点符号\n- 行数、非空行数、单词数、段落数" },
     ],
   },
 ];

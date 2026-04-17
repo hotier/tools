@@ -211,10 +211,15 @@ export default function MarkdownEditorPage() {
   };
 
   const downloadMarkdown = () => {
+    if (!markdown.trim()) {
+      showToast("不能下载空文件", "error");
+      return;
+    }
+    const timestamp = Math.floor(Date.now() / 1000);
     const blob = new Blob([markdown], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = "document.md";
+    link.download = `markdown_${timestamp}.md`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);

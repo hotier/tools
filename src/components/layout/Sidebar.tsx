@@ -48,7 +48,7 @@ export function Sidebar() {
       className={`hidden lg:flex flex-col border-r bg-background sticky top-16 h-[calc(100vh-4rem)] relative ${
         collapsed ? "w-16" : ""
       }`}
-      style={{ width: collapsed ? "4rem" : sidebarWidth }}
+      style={{ width: collapsed ? "4rem" : sidebarWidth, ['--sidebar-width' as string]: collapsed ? "4rem" : sidebarWidth }}
     >
       <div className="flex-1 overflow-y-auto py-4">
         <nav className="space-y-1 px-2">

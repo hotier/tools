@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useRef } from "react";
-import * as XLSX from "xlsx";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
@@ -479,19 +478,21 @@ export default function IntervalParserPage() {
     const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.download = "interval_results.txt";
+    const timestamp = Math.floor(Date.now() / 1000);
+    link.download = `interval_${timestamp}.txt`;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
     showToast("导出成功");
   };
 
-  const exportExcel = () => {
+  const exportExcel = async () => {
     if (validResults.length === 0) {
       showToast("没有可导出的数据", "error");
       return;
     }
 
+    const XLSX = await import("xlsx");
     const data = validResults.map((r) => ({
       "原始表达式": r.original,
       "格式化表达式": r.formatted,
@@ -504,11 +505,12 @@ export default function IntervalParserPage() {
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "区间解析结果");
-    XLSX.writeFile(wb, "interval_results.xlsx");
+    const timestamp = Math.floor(Date.now() / 1000);
+    XLSX.writeFile(wb, `interval_${timestamp}.xlsx`);
     showToast("导出成功");
   };
 
-  const handleFileImport = (file: File) => {
+  const handleFileImport = async (file: File) => {
     if (!file) return;
 
     const extension = file.name.split(".").pop()?.toLowerCase();
@@ -522,6 +524,7 @@ export default function IntervalParserPage() {
       };
       reader.readAsText(file);
     } else if (extension === "xlsx" || extension === "xls") {
+      const XLSX = await import("xlsx");
       const reader = new FileReader();
       reader.onload = (event) => {
         try {
