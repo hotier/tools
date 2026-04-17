@@ -294,7 +294,7 @@ export default function HashGeneratorPage() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button onClick={generate} variant="primary" disabled={loading}>
+        <Button onClick={generate} variant="primary" disabled={loading || !input}>
           {loading ? "计算中..." : "生成"}
         </Button>
         <Button
@@ -315,6 +315,7 @@ export default function HashGeneratorPage() {
             setResults([]);
           }}
           variant="danger"
+          disabled={!input}
         >
           清空
         </Button>

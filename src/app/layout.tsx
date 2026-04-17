@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "我的工具箱",
@@ -13,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <head>
         <style
           dangerouslySetInnerHTML={{
@@ -74,13 +78,17 @@ export default function RootLayout({
           id="initial-loader"
           style={{
             position: 'fixed',
-            inset: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: 'var(--background)',
             zIndex: 9999,
             transition: 'opacity 0.3s ease-out',
+            opacity: 1
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>

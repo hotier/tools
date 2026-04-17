@@ -1,120 +1,116 @@
 "use client";
 
-import React from "react";
+import { useMemo } from "react";
+import MarkdownIt from "markdown-it";
+import markdownItGitHubAlerts from "markdown-it-github-alerts";
+import markdownItTaskLists from "markdown-it-task-lists";
+import hljs from "highlight.js";
 import tools from "@/data/tools";
 
 interface ToolDescriptionProps {
   href: string;
 }
 
+const md = new MarkdownIt({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: function (str: string, lang: string): string {
+    const langLabel = lang && hljs.getLanguage(lang)
+      ? `<span class="code-lang">${lang}</span>`
+      : '';
+
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return `<pre class="hljs relative">${langLabel}<code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+      } catch {
+        // ignore
+      }
+    }
+    return `<pre class="hljs relative">${langLabel}<code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`;
+  },
+});
+
+md.use(markdownItGitHubAlerts);
+md.use(markdownItTaskLists);
+
 export function ToolDescription({ href }: ToolDescriptionProps) {
   const tool = tools
     .flatMap((cat) => cat.items)
     .find((item) => item.href === href);
 
+  const html = useMemo(() => {
+    return md.render(tool?.description || "");
+  }, [tool?.description]);
+
   if (!tool) return null;
-
-  const renderContent = () => {
-    const lines = tool.description.split('\n');
-    const content: React.ReactNode[] = [];
-    let currentParagraph: string[] = [];
-
-    lines.forEach((line, index) => {
-      if (line.startsWith('#')) {
-        // 处理之前的段落
-        if (currentParagraph.length > 0) {
-          content.push(
-            <p key={`p-${index}`} className="mb-4">
-              {currentParagraph.map((paraLine, paraIndex) => (
-                <React.Fragment key={paraIndex}>
-                  {paraLine}
-                  {paraIndex < currentParagraph.length - 1 && <br />}
-                </React.Fragment>
-              ))}
-            </p>
-          );
-          currentParagraph = [];
-        }
-        // 计算标题级别
-        const headingLevel = line.match(/^#+/)?.[0].length || 1;
-        const normalizedLevel = Math.min(Math.max(headingLevel, 1), 6); // 限制在 1-6 级
-        const headingText = line.replace(/^#+/, '').trim();
-        
-        // 根据级别创建不同的标题标签和样式
-        const headingClasses = [
-          "font-semibold mb-2 mt-6 first:mt-0 text-foreground",
-          normalizedLevel === 1 ? "text-lg pl-3 border-l-4 border-primary" :
-          normalizedLevel === 2 ? "text-base" :
-          normalizedLevel === 3 ? "text-sm font-medium" :
-          "text-sm font-medium"
-        ].join(' ');
-        
-        // 使用条件渲染来创建不同级别的标题
-        let headingElement;
-        switch (normalizedLevel) {
-          case 1:
-            headingElement = <h1 key={`h-${index}`} className={headingClasses}>{headingText}</h1>;
-            break;
-          case 2:
-            headingElement = <h2 key={`h-${index}`} className={headingClasses}>{headingText}</h2>;
-            break;
-          case 3:
-            headingElement = <h3 key={`h-${index}`} className={headingClasses}>{headingText}</h3>;
-            break;
-          case 4:
-            headingElement = <h4 key={`h-${index}`} className={headingClasses}>{headingText}</h4>;
-            break;
-          case 5:
-            headingElement = <h5 key={`h-${index}`} className={headingClasses}>{headingText}</h5>;
-            break;
-          default:
-            headingElement = <h6 key={`h-${index}`} className={headingClasses}>{headingText}</h6>;
-        }
-        
-        content.push(headingElement);
-      } else if (line.trim() === '') {
-        // 处理空行，结束当前段落
-        if (currentParagraph.length > 0) {
-          content.push(
-            <p key={`p-${index}`} className="mb-4">
-              {currentParagraph.map((paraLine, paraIndex) => (
-                <React.Fragment key={paraIndex}>
-                  {paraLine}
-                  {paraIndex < currentParagraph.length - 1 && <br />}
-                </React.Fragment>
-              ))}
-            </p>
-          );
-          currentParagraph = [];
-        }
-      } else {
-        // 添加到当前段落
-        currentParagraph.push(line);
-      }
-    });
-
-    // 处理最后一个段落
-    if (currentParagraph.length > 0) {
-      content.push(
-        <p key="p-last" className="mb-4">
-          {currentParagraph.map((paraLine, paraIndex) => (
-            <React.Fragment key={paraIndex}>
-              {paraLine}
-              {paraIndex < currentParagraph.length - 1 && <br />}
-            </React.Fragment>
-          ))}
-        </p>
-      );
-    }
-
-    return content;
-  };
 
   return (
     <div className="mt-8 p-4 rounded-lg border bg-card/50">
-      <div className="text-muted-foreground text-sm leading-relaxed">
-        {renderContent()}
-      </div>
+      <style>{`
+        .tool-desc-content {
+          font-size: 0.9375rem;
+        }
+        .tool-desc-content h1,
+        .tool-desc-content h2,
+        .tool-desc-content h3,
+        .tool-desc-content h4,
+        .tool-desc-content h5,
+        .tool-desc-content h6 {
+          font-size: 1rem;
+          font-weight: 600;
+          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+          padding-left: 0.75rem;
+          border-left: 3px solid #3b82f6;
+          color: var(--foreground);
+        }
+        .tool-desc-content h1:first-child,
+        .tool-desc-content h2:first-child,
+        .tool-desc-content h3:first-child {
+          margin-top: 0;
+        }
+        .tool-desc-content p {
+          margin-bottom: 0.75rem;
+        }
+        .tool-desc-content ul,
+        .tool-desc-content ol {
+          margin-bottom: 0.75rem;
+          padding-left: 1.25rem;
+          list-style-position: outside;
+        }
+        .tool-desc-content ul {
+          list-style-type: disc;
+        }
+        .tool-desc-content ol {
+          list-style-type: decimal;
+        }
+        .tool-desc-content li {
+          margin-bottom: 0.375rem;
+        }
+        .tool-desc-content li > ul,
+        .tool-desc-content li > ol {
+          margin-top: 0.375rem;
+          margin-bottom: 0.375rem;
+        }
+        .tool-desc-content pre {
+          margin-bottom: 0.75rem;
+        }
+        .tool-desc-content code {
+          background-color: var(--muted);
+          padding: 0.125rem 0.375rem;
+          border-radius: 0.25rem;
+          font-size: 0.875em;
+        }
+        .tool-desc-content pre code {
+          background-color: transparent;
+          padding: 0;
+        }
+      `}</style>
+      <div
+        className="tool-desc-content text-muted-foreground leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: html }}
+      />
     </div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSidebar } from "./SidebarContext";
+import { useSidebar, extractShortDescription } from "./SidebarContext";
 import { toolCategories } from "./layout/Sidebar";
 
 const categoryRoutes: Record<string, string> = {
@@ -33,7 +33,7 @@ export function HomeContent() {
               className="p-4 rounded-lg border bg-card hover:border-primary transition-colors"
             >
               <h2 className="font-semibold mb-1">{item.label}</h2>
-              <p className="text-muted-foreground text-sm truncate">{item.description}</p>
+              <p className="text-muted-foreground text-sm line-clamp-1">{extractShortDescription(item.description)}</p>
             </Link>
           ))}
         </div>
@@ -59,11 +59,11 @@ export function HomeContent() {
           >
             <div className="flex items-start space-x-4">
               <div className="text-primary">{cat.icon}</div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <h2 className="font-semibold text-lg mb-1 group-hover:text-primary transition-colors">
                   {cat.category}
                 </h2>
-                <p className="text-muted-foreground text-sm">
+                <p className="text-muted-foreground text-sm line-clamp-1">
                   {cat.items.map((i) => i.label).join("、")}
                 </p>
               </div>

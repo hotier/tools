@@ -691,19 +691,21 @@ export default function IntervalParserPage() {
                 }
               }
             }}
-            variant="success"
+            variant={input ? "success" : "secondary"}
           >
             {!input.trim() ? "示例数据" : "复制结果"}
           </Button>
           <Button
             onClick={exportTxt}
             variant="warning"
+            disabled={!input || validResults.length === 0}
           >
             导出 TXT
           </Button>
           <Button
             onClick={exportExcel}
             variant="warning"
+            disabled={!input || validResults.length === 0}
           >
             导出 Excel
           </Button>
@@ -714,6 +716,7 @@ export default function IntervalParserPage() {
               setCustomUpper("");
             }}
             variant="danger"
+            disabled={!input}
           >
             清空
           </Button>

@@ -134,6 +134,7 @@ export default function RegexTesterPage() {
         <Button
           onClick={clearAll}
           variant="danger"
+          disabled={!pattern && !testString}
         >
           清空
         </Button>

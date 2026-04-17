@@ -262,10 +262,10 @@ export default function MarkdownEditorPage() {
         >
           {markdown ? "复制内容" : "示例数据"}
         </Button>
-        <Button onClick={downloadMarkdown} variant="primary">
+        <Button onClick={downloadMarkdown} variant="primary" disabled={!markdown}>
           下载
         </Button>
-        <Button onClick={() => setMarkdown("")} variant="danger">
+        <Button onClick={() => setMarkdown("")} variant="danger" disabled={!markdown}>
           清空
         </Button>
       </div>

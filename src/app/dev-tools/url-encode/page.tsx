@@ -145,6 +145,7 @@ export default function UrlEncodePage() {
         <Button
           onClick={handleConvert}
           variant="primary"
+          disabled={!input}
         >
           {mode === "encode" ? "编码" : "解码"}
         </Button>
@@ -166,6 +167,7 @@ export default function UrlEncodePage() {
             setOutput("");
           }}
           variant="danger"
+          disabled={!input}
         >
           清空
         </Button>

@@ -158,6 +158,7 @@ export default function JsonFormatterPage() {
         <Button
           onClick={handleProcess}
           variant="primary"
+          disabled={!input}
         >
           转换
         </Button>
@@ -180,6 +181,7 @@ export default function JsonFormatterPage() {
             setError("");
           }}
           variant="danger"
+          disabled={!input}
         >
           清空
         </Button>

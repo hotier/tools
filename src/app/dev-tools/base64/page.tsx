@@ -137,6 +137,7 @@ export default function Base64Page() {
         <Button
           onClick={handleConvert}
           variant="primary"
+          disabled={!input}
         >
           {mode === "encode" ? "编码" : "解码"}
         </Button>
@@ -159,6 +160,7 @@ export default function Base64Page() {
             setError("");
           }}
           variant="danger"
+          disabled={!input}
         >
           清空
         </Button>

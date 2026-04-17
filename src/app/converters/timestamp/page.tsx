@@ -76,9 +76,22 @@ export default function TimestampPage() {
     }
   };
 
-  const setCurrentAsInput = () => {
+  const useCurrentTimestamp = () => {
     setInputTimestamp(currentTimestamp.toString());
     setOutputDateTime(formatDateTime(currentTimestamp));
+  };
+
+  const useCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    const seconds = String(now.getSeconds()).padStart(2, "0");
+    const dateTimeStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    setInputDateTime(dateTimeStr);
+    setOutputTimestamp(Math.floor(now.getTime() / 1000).toString());
   };
 
   const copyToClipboard = async (text: string) => {
@@ -89,7 +102,6 @@ export default function TimestampPage() {
   return (
     <ToolPageLayout title="时间戳转换" href="/converters/timestamp">
       <div className="mb-6 p-4 bg-primary/10 rounded-lg">
-        <div className="flex items-center justify-between">
           <div>
             <span className="text-sm text-muted-foreground">当前时间戳（东八区）</span>
             <div className="text-2xl font-mono font-bold text-primary">{currentTimestamp}</div>
@@ -97,43 +109,26 @@ export default function TimestampPage() {
               {formatDateTime(currentTimestamp)} (UTC+8)
             </div>
           </div>
-          <Button
-            onClick={setCurrentAsInput}
-            variant="primary"
-          >
-            使用当前时间
-          </Button>
         </div>
-      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <h3 className="font-semibold text-lg border-b pb-2">时间戳 → 日期时间</h3>
           <div>
             <label className="block text-sm font-medium mb-2">输入时间戳（秒）</label>
-            <input
-              type="text"
-              value={inputTimestamp}
-              onChange={(e) => handleTimestampChange(e.target.value)}
-              className="w-full p-3 border rounded-lg font-mono bg-background"
-              placeholder="输入秒级时间戳"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">毫秒时间戳</label>
             <div className="flex gap-2">
               <input
                 type="text"
-                value={inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : ""}
-                readOnly
-                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+                value={inputTimestamp}
+                onChange={(e) => handleTimestampChange(e.target.value)}
+                className="flex-1 p-3 border rounded-lg font-mono bg-background"
+                placeholder="输入秒级时间戳"
               />
               <Button
-                onClick={() => copyToClipboard(inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : "")}
-                disabled={!inputTimestamp}
-                variant="secondary"
+                onClick={useCurrentTimestamp}
+                variant="primary"
               >
-                复制
+                当前
               </Button>
             </div>
           </div>
@@ -150,7 +145,25 @@ export default function TimestampPage() {
               <Button
                 onClick={() => copyToClipboard(outputDateTime)}
                 disabled={!outputDateTime}
-                variant="secondary"
+                variant={outputDateTime ? "success" : "secondary"}
+              >
+                复制
+              </Button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2">毫秒时间戳</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : ""}
+                readOnly
+                className="flex-1 p-3 border rounded-lg font-mono bg-muted"
+              />
+              <Button
+                onClick={() => copyToClipboard(inputTimestamp ? (parseInt(inputTimestamp) * 1000).toString() : "")}
+                disabled={!inputTimestamp}
+                variant={inputTimestamp ? "success" : "secondary"}
               >
                 复制
               </Button>
@@ -162,13 +175,21 @@ export default function TimestampPage() {
           <h3 className="font-semibold text-lg border-b pb-2">日期时间 → 时间戳</h3>
           <div>
             <label className="block text-sm font-medium mb-2">输入日期时间（东八区）</label>
-            <input
-              type="text"
-              value={inputDateTime}
-              onChange={(e) => handleDateTimeChange(e.target.value)}
-              className="w-full p-3 border rounded-lg font-mono bg-background"
-              placeholder="格式: 2024-01-01 12:00:00"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputDateTime}
+                onChange={(e) => handleDateTimeChange(e.target.value)}
+                className="flex-1 p-3 border rounded-lg font-mono bg-background"
+                placeholder="格式: 2024-01-01 12:00:00"
+              />
+              <Button
+                onClick={useCurrentDateTime}
+                variant="primary"
+              >
+                当前
+              </Button>
+            </div>
           </div>
           <div>
             <label className="block text-sm font-medium mb-2">秒级时间戳</label>
@@ -183,7 +204,7 @@ export default function TimestampPage() {
               <Button
                 onClick={() => copyToClipboard(outputTimestamp)}
                 disabled={!outputTimestamp}
-                variant="secondary"
+                variant={outputTimestamp ? "success" : "secondary"}
               >
                 复制
               </Button>
@@ -201,7 +222,7 @@ export default function TimestampPage() {
               <Button
                 onClick={() => copyToClipboard(outputTimestamp ? (parseInt(outputTimestamp) * 1000).toString() : "")}
                 disabled={!outputTimestamp}
-                variant="secondary"
+                variant={outputTimestamp ? "success" : "secondary"}
               >
                 复制
               </Button>
