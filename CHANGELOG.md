@@ -1,5 +1,11 @@
 # 版本变更记录
 
+## 0.6.3
+
+### Patch Changes
+
+- [`7eece69`](https://github.com/hotier/tools/commit/7eece69d439f74f9e99eb56c944328e504ac25c5) Thanks [@hotier](https://github.com/hotier)! - Merge main into release
+
 ## 0.6.2
 
 ### Patch Changes
