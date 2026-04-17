@@ -1,5 +1,15 @@
 # 版本变更记录
 
+## 0.6.0
+
+### Minor Changes
+
+- [`6bf1699`](https://github.com/hotier/tools/commit/6bf169946267b5a87e5b1540ac948afbf4decc97) Thanks [@hotier](https://github.com/hotier)! - feat: 更新工具页面样式和组件优化
+
+### Patch Changes
+
+- [`e7d5de8`](https://github.com/hotier/tools/commit/e7d5de87462f1e90cbf3e3a7038af7bfb07759f4) Thanks [@hotier](https://github.com/hotier)! - feat: 更新工具页面样式和组件优化
+
 ## 0.4.0
 
 ### Minor Changes
