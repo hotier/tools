@@ -11,7 +11,6 @@ jobs:
     permissions:
       contents: write
     if: "github.event.head_commit.message != 'Version Packages'"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,9 +25,20 @@ jobs:
         run: npm ci
 
       - name: Create Changesets PR
-        uses: changesets/action@v1
+        run: |
+          npx changeset version
+          git add .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Version Packages"
+          git push origin release --force
+
+      - name: Create Pull Request
+        uses: actions/create-pull-request@v5
         with:
-          commitMode: true
+          token: ${{ secrets.GITHUB_TOKEN }}
           branch: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          title: "Version Packages"
+          body: "Changesets version update"
+          delete-branch: true
