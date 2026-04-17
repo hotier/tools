@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
+    if: "!contains(github.event.head_commit.message, 'Version Packages')"
 
     steps:
       - name: Checkout
@@ -28,7 +28,7 @@ jobs:
       - name: Create Changesets PR
         uses: changesets/action@v1
         with:
-          title: "Changeset: Version bump"
-          commit-message: "chore: version bump"
+          commitMode: true
+          branch: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
