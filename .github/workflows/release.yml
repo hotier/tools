@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
       - name: Checkout
@@ -28,8 +27,6 @@ jobs:
       - name: Create Changesets PR
         uses: changesets/action@v1
         with:
-          title: "Changeset: Version bump"
-          commit-message: "chore: version bump"
-          publish: npm run release
+          commitMode: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
