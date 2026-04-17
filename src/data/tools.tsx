@@ -48,7 +48,7 @@ const tools: ToolCategory[] = [
       </svg>
     ),
     items: [
-      { href: "/text-tools/markdown-editor", label: "Markdown 编辑器", description: "# 工具简介\n在线Markdown编辑器，支持实时预览和GFM语法" },
+      { href: "/text-tools/markdown-editor", label: "Markdown 编辑器", description: "# 工具简介\n在线Markdown编辑器，支持实时预览和GFM语法。\n\n# 功能特点\n- 实时预览：编辑时同步渲染预览效果\n- GFM支持：表格、任务列表、删除线等\n- 代码高亮：支持多种编程语言语法高亮\n- GitHub Alerts：支持 NOTE、TIP、IMPORTANT、WARNING、CAUTION 提示框\n- 滚动同步：编辑区与预览区滚动联动\n- 导出下载：支持导出为 .md 文件" },
     ],
   },
 ];
