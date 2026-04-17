@@ -102,20 +102,20 @@ export default function JsonFormatterPage() {
         <div className="flex rounded-lg border overflow-hidden">
           <button
             onClick={() => setMode("format")}
-            className={`px-4 py-2 text-sm ${mode === "format" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+            className={`px-4 py-2 text-sm ${mode === "format" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
           >
             格式化
           </button>
           <button
             onClick={() => setMode("minify")}
-            className={`px-4 py-2 text-sm ${mode === "minify" ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"}`}
+            className={`px-4 py-2 text-sm ${mode === "minify" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}
           >
             压缩
           </button>
         </div>
-        <div className="flex rounded-lg border border-gray-300 overflow-hidden">
-          <span className="px-2 py-2 text-sm bg-gray-100">缩进空格数:</span>
-          <div className="border-l border-gray-300">
+        <div className="flex rounded-lg border overflow-hidden">
+          <span className="px-2 py-2 text-sm bg-secondary">缩进空格数:</span>
+          <div className="border-l">
             <select
               value={indent}
               onChange={(e) => setIndent(Number(e.target.value))}

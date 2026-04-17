@@ -129,7 +129,7 @@ export function Header() {
                   <button
                     key={tool.href}
                     onClick={() => handleToolClick(tool.href)}
-                    className="w-full px-4 py-2 text-left hover:bg-secondary transition-colors flex items-center justify-between"
+                    className="w-full px-4 py-2 text-left hover-highlight transition-colors flex items-center justify-between"
                   >
                     <span className="text-sm">{tool.label}</span>
                     <span className="text-xs text-muted-foreground">{tool.category}</span>
@@ -151,25 +151,25 @@ export function Header() {
             <Link
               href="/"
               onClick={() => setSelectedCategory(null)}
-              className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium"
+              className="px-3 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium"
             >
               首页
             </Link>
             <Link
               href="/new"
-              className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium"
+              className="px-3 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium"
             >
               最新
             </Link>
             <Link
               href="/popular"
-              className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium"
+              className="px-3 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium"
             >
               热门
             </Link>
             <Link
               href="/recent"
-              className="px-3 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium"
+              className="px-3 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium"
             >
               最近使用
             </Link>
@@ -227,17 +227,17 @@ export function Header() {
                   setSelectedCategory(null);
                   setMobileMenuOpen(false);
                 }}
-                className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium"
+                className="px-4 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium"
               >
                 首页
               </Link>
-              <Link href="/new" className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/new" className="px-4 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
                 最新
               </Link>
-              <Link href="/popular" className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/popular" className="px-4 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
                 热门
               </Link>
-              <Link href="/recent" className="px-4 py-2 text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
+              <Link href="/recent" className="px-4 py-2 text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors text-sm font-medium" onClick={() => setMobileMenuOpen(false)}>
                 最近使用
               </Link>
             </nav>

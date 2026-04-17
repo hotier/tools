@@ -1,19 +1,23 @@
 {
   "name": "tools",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "change": "changeset",
+    "version": "changeset version",
+    "release": "node scripts/release.js",
+    "rollback": "node scripts/rollback.js"
   },
   "dependencies": {
-    "@tailwindcss/typography": "^0.5.19",
     "@types/qrcode": "^1.5.6",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.1",
     "markdown-it-github-alerts": "^1.0.1",
+    "markdown-it-task-lists": "^2.1.1",
     "next": "16.2.3",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
@@ -21,9 +25,12 @@
     "react-markdown": "^10.1.0",
     "rehype-highlight": "^7.0.2",
     "remark-gfm": "^4.0.1",
+    "simplebar-react": "^3.3.2",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.6.0",
+    "@changesets/cli": "^2.30.0",
     "@tailwindcss/postcss": "^4",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^20",
@@ -32,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "tailwindcss-github-markdown": "^0.1.2",
     "typescript": "^5"
   }
 }

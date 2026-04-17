@@ -42,8 +42,8 @@ export function ToolDescription({ href }: ToolDescriptionProps) {
         
         // 根据级别创建不同的标题标签和样式
         const headingClasses = [
-          "font-semibold mb-2 mt-6 first:mt-0 text-black",
-          normalizedLevel === 1 ? "text-lg pl-3 border-l-4 border-[#3b82f6]" :
+          "font-semibold mb-2 mt-6 first:mt-0 text-foreground",
+          normalizedLevel === 1 ? "text-lg pl-3 border-l-4 border-primary" :
           normalizedLevel === 2 ? "text-base" :
           normalizedLevel === 3 ? "text-sm font-medium" :
           "text-sm font-medium"

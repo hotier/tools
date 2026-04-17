@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
+@plugin "tailwindcss-github-markdown";
 
 :root {
   --background: #f8fafc;
@@ -14,6 +14,8 @@
   --muted-foreground: #64748b;
   --accent: #f1f5f9;
   --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
   --border: #e2e8f0;
   --input: #e2e8f0;
   --ring: #3b82f6;
@@ -32,6 +34,8 @@
   --muted-foreground: #94a3b8;
   --accent: #1e293b;
   --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
   --border: #334155;
   --input: #334155;
   --ring: #60a5fa;
@@ -50,6 +54,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -57,28 +63,55 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
+.prose h1,
+.prose h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.prose ul {
+  list-style-type: disc;
+}
+
+.prose ol {
+  list-style-type: decimal;
+}
+
+.prose .task-list-item {
+  list-style-type: none;
+}
+
+.prose .task-list-item-checkbox {
+  margin: 0 0.2em 0.25em -1.4em;
+  vertical-align: middle;
+}
+
 * {
   border-color: var(--border);
 }
 
 html {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  color-scheme: light;
 }
 
-html *,
-html *::before,
-html *::after {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+:root {
+  transition: none;
 }
 
-::placeholder {
-  color: var(--muted-foreground);
-  transition: color 0.3s ease;
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *::before,
+:root.theme-transition *::after {
+  transition: 
+    background-color 0.3s cubic-bezier(0.2, 0.7, 0.3, 1),
+    color 0.3s cubic-bezier(0.2, 0.7, 0.3, 1),
+    border-color 0.3s cubic-bezier(0.2, 0.7, 0.3, 1),
+    box-shadow 0.3s cubic-bezier(0.2, 0.7, 0.3, 1),
+    outline-color 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
-input::placeholder,
-textarea::placeholder {
-  color: var(--muted-foreground);
+.dark {
+  color-scheme: dark;
 }
 
 body {
@@ -86,22 +119,58 @@ body {
   color: var(--foreground);
 }
 
+.hover-highlight:hover {
+  background-color: rgba(148, 163, 184, 0.25);
+}
+
+.dark .hover-highlight:hover {
+  background-color: rgba(51, 65, 85, 0.5);
+}
+
+::placeholder {
+  color: var(--muted-foreground);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted-foreground);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--muted);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-foreground);
-  border-radius: 4px;
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.3s;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--foreground);
+:root.is-scrolling ::-webkit-scrollbar-thumb,
+:root.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+:root.is-scrolling ::-webkit-scrollbar-thumb:hover,
+:root.is-scrolling::-webkit-scrollbar-thumb:hover,
+.is-scrolling ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
+:root.dark.is-scrolling ::-webkit-scrollbar-thumb,
+:root.dark.is-scrolling::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+}
+
+:root.dark.is-scrolling ::-webkit-scrollbar-thumb:hover,
+:root.dark.is-scrolling::-webkit-scrollbar-thumb:hover,
+.dark.is-scrolling ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
 }
 
 @keyframes fade-in {
@@ -132,7 +201,7 @@ pre {
   padding: 1rem;
   border-radius: 0.5rem;
   overflow-x: auto;
-  background-color: #1e293b;
+  background-color: var(--muted);
 }
 
 code {
@@ -199,7 +268,7 @@ code {
 }
 
 .dark pre {
-  background-color: #0f172a;
+  background-color: var(--muted);
 }
 
 .dark .hljs-comment,
@@ -248,34 +317,24 @@ code {
 .prose table {
   border-collapse: collapse;
   width: 100%;
+  table-layout: fixed;
+  display: table;
 }
 
 .prose th,
 .prose td {
-  border: 1px solid var(--border);
+  border: 1px solid var(--borderColor-default, var(--border));
   padding: 0.5rem 0.75rem;
 }
 
 .prose thead th {
-  background-color: var(--muted);
+  background-color: var(--bgColor-muted, var(--muted));
   font-weight: 600;
+  text-align: left;
 }
 
 .prose tbody tr:nth-child(even) {
-  background-color: var(--muted);
-}
-
-.dark .prose th,
-.dark .prose td {
-  border-color: var(--border);
-}
-
-.dark .prose thead th {
-  background-color: var(--muted);
-}
-
-.dark .prose tbody tr:nth-child(even) {
-  background-color: var(--muted);
+  background-color: var(--bgColor-muted, var(--muted));
 }
 
 .prose blockquote p::before,
@@ -291,55 +350,8 @@ code {
   font-weight: 400;
 }
 
-.prose h5 {
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 0.5rem !important;
-  line-height: 1.4 !important;
-  color: var(--foreground) !important;
-}
-
-.prose h6 {
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  margin-top: 1.5rem !important;
-  margin-bottom: 0.5rem !important;
-  line-height: 1.4 !important;
-  color: var(--foreground) !important;
-}
-
-.prose h1 {
-  font-size: 1.75rem !important;
-  color: var(--foreground) !important;
-}
-
-.prose h2 {
-  font-size: 1.5rem !important;
-  color: var(--foreground) !important;
-}
-
-.prose h3 {
-  font-size: 1.25rem !important;
-  color: var(--foreground) !important;
-}
-
-.prose h4 {
-  font-size: 1rem !important;
-  color: var(--foreground) !important;
-}
-
-.prose a {
-  color: #3b82f6 !important;
-  text-decoration: none !important;
-}
-
 .prose a:hover {
   text-decoration: underline !important;
-}
-
-.dark .prose a {
-  color: #60a5fa !important;
 }
 
 .code-lang {
@@ -347,8 +359,8 @@ code {
   top: 0.5rem;
   right: 0.5rem;
   font-size: 0.75rem;
-  color: #94a3b8;
-  background-color: rgba(51, 65, 85, 0.5);
+  color: var(--muted-foreground);
+  background-color: var(--muted);
   padding: 0.125rem 0.5rem;
   border-radius: 0.25rem;
   z-index: 10;
@@ -421,4 +433,74 @@ code {
 
 .markdown-alert-caution .markdown-alert-title {
   color: #cf222e;
+}
+
+.prose .hljs {
+  background: var(--bgColor-muted);
+  color: var(--fgColor-default);
+}
+
+.prose .hljs-comment,
+.prose .hljs-quote {
+  color: var(--color-prettylights-syntax-comment);
+}
+
+.prose .hljs-keyword,
+.prose .hljs-selector-tag,
+.prose .hljs-addition {
+  color: var(--color-prettylights-syntax-keyword);
+}
+
+.prose .hljs-number,
+.prose .hljs-string,
+.prose .hljs-meta .hljs-meta-string,
+.prose .hljs-literal,
+.prose .hljs-doctag,
+.prose .hljs-regexp {
+  color: var(--color-prettylights-syntax-string);
+}
+
+.prose .hljs-title,
+.prose .hljs-section,
+.prose .hljs-name,
+.prose .hljs-selector-id,
+.prose .hljs-selector-class {
+  color: var(--color-prettylights-syntax-entity);
+}
+
+.prose .hljs-attribute,
+.prose .hljs-attr,
+.prose .hljs-variable,
+.prose .hljs-template-variable,
+.prose .hljs-class .hljs-title,
+.prose .hljs-type {
+  color: var(--color-prettylights-syntax-variable);
+}
+
+.prose .hljs-symbol,
+.prose .hljs-bullet,
+.prose .hljs-subst,
+.prose .hljs-meta,
+.prose .hljs-meta .hljs-keyword,
+.prose .hljs-selector-attr,
+.prose .hljs-selector-pseudo,
+.prose .hljs-link {
+  color: var(--color-prettylights-syntax-constant);
+}
+
+.prose .hljs-built_in,
+.prose .hljs-deletion {
+  color: var(--color-prettylights-syntax-keyword);
+}
+
+.prose .hljs-formula {
+  background: var(--color-prettylights-syntax-markup-inserted-bg);
+}
+
+.prose .hljs-emphasis {
+  font-style: italic;
+}
+
+.prose .hljs-strong {
+  font-weight: bold;
 }

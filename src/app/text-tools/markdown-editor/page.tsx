@@ -3,12 +3,13 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import MarkdownIt from "markdown-it";
 import markdownItGitHubAlerts from "markdown-it-github-alerts";
+import markdownItTaskLists from "markdown-it-task-lists";
 import hljs from "highlight.js";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { useToast } from "@/components/ToastContext";
 import { Button } from "@/components/Button";
-import "highlight.js/styles/github-dark.css";
+import { useTheme } from "@/components/ThemeProvider";
 
 const defaultMarkdown = `# Markdown 编辑器
 
@@ -153,10 +154,12 @@ const md = new MarkdownIt({
 });
 
 md.use(markdownItGitHubAlerts);
+md.use(markdownItTaskLists);
 
 export default function MarkdownEditorPage() {
   useTrackToolUsage("/text-tools/markdown-editor", "Markdown 编辑器");
   const { showToast } = useToast();
+  const { resolvedTheme, mounted } = useTheme();
   const [markdown, setMarkdown] = useState("");
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -236,7 +239,7 @@ export default function MarkdownEditorPage() {
           <div
             ref={previewRef}
             onScroll={handlePreviewScroll}
-            className="w-full h-[calc(100vh-20rem)] p-4 border rounded-lg overflow-auto bg-card prose prose-sm dark:prose-invert max-w-none scrollbar-hide"
+            className={`w-full h-[calc(100vh-20rem)] p-4 border rounded-lg overflow-auto bg-card prose max-w-none scrollbar-hide ${mounted && resolvedTheme === "dark" ? "prose-invert" : ""}`}
             dangerouslySetInnerHTML={{ __html: html }}
           />
         </div>
