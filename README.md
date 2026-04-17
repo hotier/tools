@@ -1,6 +1,6 @@
 # 🔧 个人工具箱
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](https://github.com/hotier/tools)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/hotier/tools)
 [![Next.js](https://img.shields.io/badge/Next.js-16.2.3-black.svg)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -83,49 +83,88 @@ npm run start
 
 ## 🔄 版本管理
 
-本项目使用 Changesets 进行版本管理。
+本项目使用 **Changesets** 实现一站式版本管理，全链路打通：
+**功能→变更→版本→发布→更新→回滚**
 
-### 添加变更记录
+### 📋 日常操作 SOP（4 步完成发布）
 
-开发完成后，记录变更：
+```bash
+# 1️⃣ 开发功能
+git checkout -b feature/xxx
+# ... 编写代码 ...
+
+# 2️⃣ 记录功能变更
+npm run change
+# 选择变更类型，输入功能描述
+
+# 3️⃣ 聚合版本（自动升版本号）
+npm run version
+# 自动更新 package.json 和 CHANGELOG.md
+
+# 4️⃣ 一键发版
+npm run release
+# 自动提交、打标签、推送到远程
+```
+
+### 📦 版本号规则（严格 SemVer）
+
+| 类型 | 说明 | 版本变化 |
+|------|------|----------|
+| `patch` | Bug 修复、小优化 | 0.0.x |
+| `minor` | 新功能、兼容更新 | 0.x.0 |
+| `major` | 重大变更、不兼容重构 | x.0.0 |
+
+### 🔍 详细操作步骤
+
+#### 1. 记录功能变更
 
 ```bash
 npm run change
 ```
 
-选择变更类型：
-- `patch` - Bug 修复 (0.0.x)
-- `minor` - 新功能 (0.x.0)
-- `major` - 重大变更 (x.0.0)
+交互步骤：
+1. 选择变更类型：`patch | minor | major`
+2. 输入功能描述（如：新增首页轮播、修复登录弹窗 bug）
+3. 自动生成 `.changeset/xxx.md` 功能变更文件
 
-### 预览版本变更
+#### 2. 聚合版本号
 
 ```bash
 npm run version
 ```
 
-### 发布新版本
+自动完成：
+- ✅ 修改 `package.json` 版本号（零手动）
+- ✅ 生成/更新 `CHANGELOG.md`
+- ✅ 删除已聚合的 `.changeset` 临时文件
+
+#### 3. 一键发布
 
 ```bash
 npm run release
 ```
 
 自动完成：
-- 更新 package.json 版本号
-- 更新 CHANGELOG.md
-- 创建 Git 标签
+- ✅ Git 添加所有更改
+- ✅ Git 提交 (`chore: release vX.X.X`)
+- ✅ 创建 Git 标签 (`vX.X.X`)
+- ❓ 询问是否推送到远程
 
-### 推送到远程
-
-```bash
-git push origin main --tags
-```
-
-### 版本回滚
+#### 4. 版本回滚
 
 ```bash
 npm run rollback
 ```
+
+选择历史版本标签进行回滚。
+
+### 🎯 版本管理优势
+
+- **版本号管理**：全自动，永不手动改，严格 SemVer，全局唯一
+- **功能更新管理**：每个功能绑定变更，可归集、可追溯、可合并
+- **版本管控**：Git Tag + Changesets 双保险，发布/回滚一键搞定
+- **客户端更新**：版本号联动，自动提示新功能，解决缓存问题
+- **全闭环**：从开发→功能记录→版本→发布→更新→回滚，一个体系、一套工具
 
 ## 📁 项目结构
 
@@ -144,9 +183,12 @@ tools/
 │   │   ├── page.tsx      # 首页
 │   │   └── settings/     # 设置页面
 │   ├── components/       # React 组件
-│   │   └── layout/       # 布局组件
+│   │   ├── layout/       # 布局组件
+│   │   └── UpdateChecker.tsx  # 版本更新检测
 │   ├── config/           # 配置文件
-│   │   └── version.ts    # 版本配置
+│   │   └── version.ts    # 版本历史
+│   ├── utils/            # 工具函数
+│   │   └── version.ts    # 版本号读取
 │   └── hooks/            # React Hooks
 ├── CHANGELOG.md          # 更新日志
 ├── package.json

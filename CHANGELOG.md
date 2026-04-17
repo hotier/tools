@@ -1,5 +1,16 @@
 # 版本变更记录
 
+## 0.3.1
+
+### Patch Changes
+
+- - 优化版本管理系统为一站式流程
+  - 版本号从 package.json 自动读取，零手动修改
+  - 添加 UpdateChecker 组件自动检测版本更新
+  - 简化 release.js 发布脚本
+  - 更新 Changesets 配置为 public access
+  - 完善版本管理工作流文档
+
 ## 0.3.0
 
 ### Minor Changes
