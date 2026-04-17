@@ -1,5 +1,11 @@
 # 版本变更记录
 
+## 0.6.1
+
+### Patch Changes
+
+- [`706eed0`](https://github.com/hotier/tools/commit/706eed0f968b03f13275294089d23338bd2c3a05) Thanks [@hotier](https://github.com/hotier)! - 更新版本号和 changelog
+
 ## 0.6.0
 
 ### Minor Changes
