@@ -3,17 +3,31 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: "github.event.head_commit.message != 'Version Packages'"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get release branch commit message
+        id: get_commit
+        run: |
+          git fetch origin release
+          COMMIT_MSG=$(git log --format=%s -n 1 origin/release)
+          echo "commit_msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
+
+      - name: Merge release into main
+        run: |
+          git merge --no-ff origin/release -m "Merge release branch: ${{ steps.get_commit.outputs.commit_msg }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,10 +42,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git checkout -b release || true
-          CHANGELOG=false npx changeset version
+          npx changeset version
           git add .
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "Version Packages"
-          git push origin release --force
+          git push origin main
