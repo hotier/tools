@@ -1,5 +1,28 @@
 # 版本变更记录
 
+## 0.7.1
+
+### Patch Changes
+
+- [`9365e8e`](https://github.com/hotier/tools/commit/9365e8e718f9a1f3aace11eadebdb82b189cc9d6) Thanks [@hotier](https://github.com/hotier)! - - 工具使用追踪 ：新增 useTrackToolUsage 组件，追踪工具使用情况
+  - 新版首页/最新/热门页面 ：全新设计的页面布局，展示最近更新和热门工具
+  ### 🔧 优化
+  - 搜索框体验 ：自定义占位层，支持"请键入 + 斜杠图标 + 搜索"样式
+  - 工具详情优化 ：更新了以下工具的描述说明：
+    - 二维码生成器：新增容错级别详细说明（L/M/Q/H）
+    - Markdown 编辑器：完善功能特点列表
+    - 字数统计：详细统计项目说明
+    - 颜色选择器：新增 HEX/RGB/HSL 格式支持说明
+    - 区间解析器：优化时间戳范围说明
+  ### 🗑️ 删除
+  - 移除 changesets 相关配置（ .changeset/ 目录）
+  - 移除部分冗余组件
+  - 简化 vercel.json 缓存配置
+  ### ⚙️ 其他
+  - Workflow 发布流程优化
+  - 全局样式和组件优化
+  - 依赖版本更新
+
 ## 0.7.0
 
 ### Minor Changes
