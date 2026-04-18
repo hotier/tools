@@ -10,47 +10,57 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: main
-          token: ${{ secrets.GITHUB_TOKEN }}
+            fetch-depth: 0
+            ref: release
+            token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git identity
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Get release branch commit message
-        id: get_commit
-        run: |
-          git fetch origin release
-          COMMIT_MSG=$(git log --format=%s -n 1 origin/release)
-          echo "commit_msg=$COMMIT_MSG" >> $GITHUB_OUTPUT
-
-      - name: Merge release into main
-        run: |
-          git merge --no-ff origin/release -m "Merge release branch: ${{ steps.get_commit.outputs.commit_msg }}"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: "npm"
+            node-version: 20
+            cache: "npm"
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Version Update
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 核心：升级版本 + 同步lock文件 + 提交推送
+      - name: Version Update on release
         run: |
-          npx changeset version
+          # 1. 执行版本升级
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx changeset version
+          
+          # 2. 🔥 关键修复：同步 package-lock.json 版本（解决不一致！）
+          npm install --package-lock-only
+          
+          # 3. 判断是否有文件修改（有变更=需要发布，无变更=跳过）
+          if git diff --quiet; then
+            echo "✅ 无待发布变更，无需升级版本"
+            exit 0
+          fi
+          
+          # 4. 有变更：提交所有修改（package.json + lock + changelog）
           VERSION=$(node -p "require('./package.json').version")
           git add .
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git commit -m "Version Packages v${VERSION}"
+          git push origin release
+
+      # 自动合并到 main（仅版本升级成功后执行）
+      - name: Merge release into main
+        if: success()
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git checkout main
+          git pull origin main
+          # 强制使用 release 代码覆盖冲突
+          git merge --no-ff -X theirs origin/release -m "Release: v${VERSION}"
           git push origin main

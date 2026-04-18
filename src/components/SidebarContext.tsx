@@ -6,6 +6,7 @@ export interface ToolItem {
   href: string;
   label: string;
   description: string;
+  date?: string;
 }
 
 export interface ToolCategory {
@@ -14,18 +15,7 @@ export interface ToolCategory {
   items: ToolItem[];
 }
 
-export function extractShortDescription(description: string): string {
-  const match = description.match(/#\s*工具简介\n([^#\n]+)/);
-  if (match) {
-    return match[1].trim().replace(/。$/, '');
-  }
-  const firstLine = description.split('\n')[0].replace(/^#+\s*/, '').trim().replace(/。$/, '');
-  return firstLine;
-}
-
 interface SidebarContextType {
-  selectedCategory: string | null;
-  setSelectedCategory: (category: string | null) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }
@@ -33,11 +23,10 @@ interface SidebarContextType {
 const SidebarContext = createContext<SidebarContextType | undefined>(undefined);
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <SidebarContext.Provider value={{ selectedCategory, setSelectedCategory, collapsed, setCollapsed }}>
+    <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
       {children}
     </SidebarContext.Provider>
   );
@@ -50,3 +39,5 @@ export function useSidebar() {
   }
   return context;
 }
+
+export { extractShortDescription } from "@/lib/utils";

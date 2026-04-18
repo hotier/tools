@@ -105,15 +105,15 @@ export default function ColorPickerPage() {
     }
   };
 
-  const handleRgbChange = (key: "r" | "g" | "b", value: number) => {
-    const newRgb = { ...rgb, [key]: value };
+  const handleRgbChange = (r: number, g: number, b: number) => {
+    const newRgb = { r, g, b };
     setRgb(newRgb);
     setHex(rgbToHex(newRgb.r, newRgb.g, newRgb.b));
     setHsl(rgbToHsl(newRgb.r, newRgb.g, newRgb.b));
   };
 
-  const handleHslChange = (key: "h" | "s" | "l", value: number) => {
-    const newHsl = { ...hsl, [key]: value };
+  const handleHslChange = (h: number, s: number, l: number) => {
+    const newHsl = { h, s, l };
     setHsl(newHsl);
     const rgbValue = hslToRgb(newHsl.h, newHsl.s, newHsl.l);
     setRgb(rgbValue);
@@ -142,151 +142,123 @@ export default function ColorPickerPage() {
 
   return (
     <ToolPageLayout title="颜色选择器" href="/converters/color-picker">
-      <div className="border rounded-lg p-6">
-        <div className="space-y-4">
-          <div className="flex gap-6">
-            <div className="flex-1">
-              <div className="text-sm font-medium mb-2">颜色预览</div>
-              <div className="flex gap-2">
+      <div className="space-y-8 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex-1">
+            <div className="text-sm font-medium mb-2">颜色选择器</div>
+            <div className="flex gap-2 items-end">
+              <div className="relative flex-1 h-10 group cursor-pointer">
+                <input
+                  type="color"
+                  value={hex}
+                  onChange={(e) => handleHexChange(e.target.value)}
+                  className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
+                />
                 <div
-                  className="flex-1 h-10 rounded-lg border"
+                  className="absolute inset-0 rounded-lg pointer-events-none border"
                   style={{ backgroundColor: hex }}
                 />
-                <div className="w-10 h-10 rounded-lg border flex flex-col overflow-hidden">
-                  <div className="flex-1 bg-white"></div>
-                  <div className="flex-1 bg-gray-200"></div>
-                  <div className="flex-1 bg-gray-800"></div>
-                </div>
               </div>
-            </div>
-            <div className="flex-1">
-              <div className="text-sm font-medium mb-2">HEX</div>
-              <div className="flex gap-2 items-end">
-                <div className="grid grid-cols-3 gap-2 flex-1">
-                  <div className="col-span-3">
-                    <input
-                      type="text"
-                      value={hex}
-                      onChange={(e) => handleHexChange(e.target.value)}
-                      className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
-                    />
-                  </div>
-                </div>
-                <Button
-                  onClick={() => copyToClipboard(hex)}
-                  variant="success"
-                  size="input-match"
-                >
-                  复制
-                </Button>
-              </div>
+              <button
+                onClick={handleEyedropperClick}
+                className="w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer text-foreground hover:bg-accent flex-shrink-0"
+                title="取色器"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M988.16 92.16L926.72 30.72c-40.96-40.96-102.4-40.96-143.36 0l-143.36 143.36L573.44 102.4 440.32 240.64l56.32 56.32-389.12 394.24c-25.6 25.6-40.96 61.44-40.96 92.16l-20.48 20.48c-46.08 51.2-46.08 128 0 179.2 20.48 25.6 51.2 40.96 81.92 40.96s66.56-15.36 87.04-35.84l20.48-20.48c35.84 0 66.56-15.36 92.16-40.96l389.12-394.24 56.32 56.32 138.24-138.24-66.56-71.68 143.36-143.36c40.96-40.96 40.96-102.4 0-143.36m-716.8 768c-10.24 10.24-25.6 15.36-35.84 15.36-10.24 0-15.36 0-25.6-5.12L153.6 921.6c-5.12 5.12-15.36 10.24-25.6 10.24s-20.48-5.12-25.6-10.24c-15.36-15.36-15.36-35.84 0-51.2l56.32-51.2c-10.24-20.48-5.12-46.08 10.24-61.44l389.12-394.24 102.4 102.4-389.12 394.24z m0 0" fill="currentColor" />
+                </svg>
+              </button>
             </div>
           </div>
-
-          <div className="flex gap-6">
-            <div className="flex-1">
-              <div className="text-sm font-medium mb-2">颜色选择器</div>
-              <div className="flex gap-2 items-end">
-                <div className="relative flex-1 h-10 group cursor-pointer">
-                  <input
-                    type="color"
-                    value={hex}
-                    onChange={(e) => handleHexChange(e.target.value)}
-                    className="absolute inset-0 w-full h-full cursor-pointer opacity-0"
-                  />
-                  <div
-                    className="absolute inset-0 rounded-lg pointer-events-none border"
-                    style={{ backgroundColor: hex }}
-                  />
-                </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium mb-2">常用颜色</div>
+            <div className="h-10 flex gap-1 overflow-x-auto pb-1">
+              {[
+                "#ef4444", "#f87171", "#f97316", "#fb923c", "#eab308", "#84cc16", "#22c55e", "#4ade80", "#14b8a6",
+                "#06b6d4", "#22d3ee", "#3b82f6", "#60a5fa", "#8b5cf6", "#a78bfa", "#78716c", "#000000"
+              ].map((color) => (
                 <button
-                  onClick={handleEyedropperClick}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center cursor-pointer text-foreground hover:bg-accent"
-                  title="取色器"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M988.16 92.16L926.72 30.72c-40.96-40.96-102.4-40.96-143.36 0l-143.36 143.36L573.44 102.4 440.32 240.64l56.32 56.32-389.12 394.24c-25.6 25.6-40.96 61.44-40.96 92.16l-20.48 20.48c-46.08 51.2-46.08 128 0 179.2 20.48 25.6 51.2 40.96 81.92 40.96s66.56-15.36 87.04-35.84l20.48-20.48c35.84 0 66.56-15.36 92.16-40.96l389.12-394.24 56.32 56.32 138.24-138.24-66.56-71.68 143.36-143.36c40.96-40.96 40.96-102.4 0-143.36m-716.8 768c-10.24 10.24-25.6 15.36-35.84 15.36-10.24 0-15.36 0-25.6-5.12L153.6 921.6c-5.12 5.12-15.36 10.24-25.6 10.24s-20.48-5.12-25.6-10.24c-15.36-15.36-15.36-35.84 0-51.2l56.32-51.2c-10.24-20.48-5.12-46.08 10.24-61.44l389.12-394.24 102.4 102.4-389.12 394.24z m0 0" fill="currentColor" />
-                  </svg>
-                </button>
-              </div>
+                  key={color}
+                  onClick={() => handleHexChange(color)}
+                  className="w-9 h-9 border hover:scale-125 transition-transform flex-shrink-0"
+                  style={{ backgroundColor: color }}
+                  title={color}
+                />
+              ))}
             </div>
-            <div className="flex-1">
-              <div className="flex gap-2 items-end">
-                <div className="grid grid-cols-3 gap-2 flex-1">
-                  {(["R", "G", "B"] as const).map((key) => {
-                    const lowerKey = key.toLowerCase() as "r" | "g" | "b";
-                    return (
-                      <div key={key} className="flex flex-col">
-                        <div className="text-sm font-medium mb-2">{key}</div>
-                        <input
-                          type="number"
-                          min="0"
-                          max="255"
-                          value={rgb[lowerKey]}
-                          onChange={(e) => handleRgbChange(lowerKey, parseInt(e.target.value) || 0)}
-                          className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                <Button
-                  onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
-                  variant="success"
-                  size="input-match"
-                >
-                  复制
-                </Button>
-              </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 max-w-4xl mx-auto">
+          <div className="flex-1">
+            <div className="text-sm font-medium mb-2">HEX</div>
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={hex}
+                onChange={(e) => handleHexChange(e.target.value)}
+                className="flex-1 h-10 p-2 border rounded-lg font-mono bg-background min-w-0"
+              />
+              <Button
+                onClick={() => copyToClipboard(hex)}
+                variant="success"
+                size="input-match"
+              >
+                复制
+              </Button>
             </div>
           </div>
 
-          <div className="flex gap-6">
-            <div className="flex-1">
-              <div className="text-sm font-medium mb-2">常用颜色</div>
-              <div className="h-10 flex gap-0">
-                {[
-                  "#ef4444", "#f87171", "#f97316", "#fb923c", "#eab308", "#84cc16", "#22c55e", "#4ade80", "#14b8a6",
-                  "#06b6d4", "#22d3ee", "#3b82f6", "#60a5fa", "#8b5cf6", "#a78bfa", "#78716c", "#000000"
-                ].map((color) => (
-                  <button
-                    key={color}
-                    onClick={() => handleHexChange(color)}
-                    className="w-10 h-10 border hover:scale-125 transition-transform flex-shrink-0"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                ))}
-              </div>
+          <div className="flex-1">
+            <div className="text-sm font-medium mb-2">RGB</div>
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={`${rgb.r}, ${rgb.g}, ${rgb.b}`}
+                onChange={(e) => {
+                  const values = e.target.value.split(',').map(v => parseInt(v.trim()) || 0);
+                  if (values.length === 3) {
+                    handleRgbChange(values[0], values[1], values[2]);
+                  }
+                }}
+                className="flex-1 h-10 p-2 border rounded-lg font-mono bg-background min-w-0"
+                placeholder="r, g, b"
+              />
+              <Button
+                onClick={() => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`)}
+                variant="success"
+                size="input-match"
+              >
+                复制
+              </Button>
             </div>
-            <div className="flex-1">
-              <div className="flex gap-2 items-end">
-                <div className="grid grid-cols-3 gap-2 flex-1">
-                  {(["H", "S", "L"] as const).map((key) => {
-                    const lowerKey = key.toLowerCase() as "h" | "s" | "l";
-                    return (
-                      <div key={key} className="flex flex-col">
-                        <div className="text-sm font-medium mb-2">{key}</div>
-                        <input
-                          type="number"
-                          min="0"
-                          max={lowerKey === "h" ? 360 : 100}
-                          value={hsl[lowerKey]}
-                          onChange={(e) => handleHslChange(lowerKey, parseInt(e.target.value) || 0)}
-                          className="w-full p-2 h-10 border rounded-lg font-mono bg-background"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                <Button
-                  onClick={() => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`)}
-                  variant="success"
-                  size="input-match"
-                >
-                  复制
-                </Button>
-              </div>
+          </div>
+
+          <div className="flex-1">
+            <div className="text-sm font-medium mb-2">HSL</div>
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                value={`${hsl.h}, ${hsl.s}%, ${hsl.l}%`}
+                onChange={(e) => {
+                  const values = e.target.value.split(',').map(v => {
+                    const trimmed = v.trim();
+                    return parseInt(trimmed.replace('%', '')) || 0;
+                  });
+                  if (values.length === 3) {
+                    handleHslChange(values[0], values[1], values[2]);
+                  }
+                }}
+                className="flex-1 h-10 p-2 border rounded-lg font-mono bg-background min-w-0"
+                placeholder="h, s%, l%"
+              />
+              <Button
+                onClick={() => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`)}
+                variant="success"
+                size="input-match"
+              >
+                复制
+              </Button>
             </div>
           </div>
         </div>

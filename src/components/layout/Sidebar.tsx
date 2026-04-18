@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { useSidebar, ToolItem } from "../SidebarContext";
+import { useSidebar } from "../SidebarContext";
 import tools from "@/data/tools";
+import { categoryRoutes } from "@/data/routes";
 
 export { tools as toolCategories };
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-  const { selectedCategory, setSelectedCategory, collapsed, setCollapsed } = useSidebar();
+  const { collapsed, setCollapsed } = useSidebar();
   const sidebarRef = useRef<HTMLElement>(null);
   const [sidebarWidth, setSidebarWidth] = useState("auto");
 
@@ -31,15 +31,8 @@ export function Sidebar() {
     }
   }, [collapsed]);
 
-  const isCategoryActive = (items: ToolItem[]) => {
-    return items.some((item) => pathname === item.href);
-  };
-
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
-    if (pathname !== "/") {
-      router.push("/");
-    }
+  const isCategoryActive = (href: string) => {
+    return pathname.startsWith(href);
   };
 
   return (
@@ -53,15 +46,15 @@ export function Sidebar() {
       <div className="flex-1 overflow-y-auto py-4">
         <nav className="space-y-1 px-2">
           {tools.map((group) => {
-            const isActive = isCategoryActive(group.items);
-            const isSelected = selectedCategory === group.category;
+            const href = categoryRoutes[group.category] || "/";
+            const isActive = isCategoryActive(href);
 
             return (
-              <button
+              <Link
                 key={group.category}
-                onClick={() => handleCategoryClick(group.category)}
+                href={href}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                  isActive || isSelected
+                  isActive
                     ? "bg-primary/10 text-primary"
                     : "text-muted-foreground hover-highlight hover:text-foreground"
                 } ${collapsed ? "justify-center" : ""}`}
@@ -73,7 +66,7 @@ export function Sidebar() {
                     {group.category}
                   </span>
                 )}
-              </button>
+              </Link>
             );
           })}
         </nav>

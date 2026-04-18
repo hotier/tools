@@ -126,7 +126,7 @@ export default function TimestampPage() {
               />
               <Button
                 onClick={useCurrentTimestamp}
-                variant="default"
+                variant="info"
                 size="input-match"
               >
                 当前
@@ -188,7 +188,7 @@ export default function TimestampPage() {
               />
               <Button
                 onClick={useCurrentDateTime}
-                variant="default"
+                variant="info"
                 size="input-match"
               >
                 当前

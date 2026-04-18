@@ -1,33 +1,110 @@
-import Link from "next/link";
+import tools from "@/data/tools";
+import { extractShortDescription } from "@/lib/utils";
+import { db } from "@/lib/db";
+import ToolCard from "@/components/ToolCard";
 
-const newTools = [
-  { href: "/dev-tools/json-formatter", title: "JSON 格式化", description: "格式化、压缩、验证 JSON 数据", date: "2024-01-15" },
-  { href: "/converters/timestamp", title: "时间戳转换", description: "时间戳与日期时间互相转换", date: "2024-01-14" },
-  { href: "/image-tools/qrcode", title: "二维码生成", description: "生成自定义二维码", date: "2024-01-13" },
-];
+type ToolInfo = {
+  href: string;
+  title: string;
+  description: string;
+  date: string;
+};
+
+function toCST(utcDate: string | Date): string {
+  const date = new Date(utcDate);
+  const cstOffset = 8 * 60;
+  const localOffset = date.getTimezoneOffset();
+  const cstDate = new Date(date.getTime() + (cstOffset + localOffset) * 60000);
+  const year = cstDate.getFullYear();
+  const month = String(cstDate.getMonth() + 1).padStart(2, '0');
+  const day = String(cstDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+async function getNewTools(): Promise<ToolInfo[]> {
+  try {
+    const usageData = await db`
+      SELECT tool_path, usage_count, created_at
+      FROM tool_usage
+      ORDER BY created_at DESC
+      LIMIT 5
+    `;
+
+    const allTools = tools.flatMap(category =>
+      category.items.map(item => ({
+        href: item.href,
+        title: item.label,
+        description: extractShortDescription(item.description)
+      }))
+    );
+
+    const toolMap = new Map(allTools.map(tool => [tool.href, tool]));
+
+    const newTools = usageData
+      .map((item) => {
+        const tool = toolMap.get(item.tool_path as string);
+        if (tool) {
+          return {
+            ...tool,
+            date: toCST(item.created_at as Date)
+          };
+        }
+        return null;
+      })
+      .filter((tool): tool is ToolInfo => tool !== null)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return newTools;
+  } catch (error) {
+    console.error('Error fetching new tools from database:', error);
+    // 数据库连接失败时，使用本地工具数据作为 fallback
+    const allTools = tools.flatMap(category =>
+      category.items.map(item => ({
+        href: item.href,
+        title: item.label,
+        description: extractShortDescription(item.description),
+        // 使用当前日期作为默认日期
+        date: toCST(new Date())
+      }))
+    );
+    // 取前 5 个工具
+    return allTools.slice(0, 5);
+  }
+}
+
+async function NewToolsList() {
+  const newTools = await getNewTools();
+
+  if (newTools.length === 0) {
+    return <div className="text-center py-8 text-muted-foreground">暂无数据</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {newTools.map((tool: ToolInfo, index: number) => (
+        <ToolCard
+          key={tool.href}
+          href={tool.href}
+          label={tool.title}
+          description={tool.description}
+          index={index}
+          layout="list"
+          showDate={true}
+          date={tool.date}
+        />
+      ))}
+    </div>
+  );
+}
+
+export const revalidate = 3600; // 缓存1小时
 
 export default function NewPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-2">最新工具</h1>
       <p className="text-muted-foreground mb-6">最近添加的工具</p>
-      <div className="space-y-4">
-        {newTools.map((tool) => (
-          <Link
-            key={tool.href}
-            href={tool.href}
-            className="block p-4 rounded-lg border bg-card hover:border-primary transition-colors"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="font-semibold mb-1">{tool.title}</h2>
-                <p className="text-muted-foreground text-sm">{tool.description}</p>
-              </div>
-              <span className="text-xs text-muted-foreground">{tool.date}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <NewToolsList />
     </div>
   );
 }

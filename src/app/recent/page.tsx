@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useRecentTools } from "@/components/RecentToolsContext";
+import ToolCard from "@/components/ToolCard";
 
 export default function RecentPage() {
   const { recentTools, clearRecentTools } = useRecentTools();
@@ -13,7 +13,7 @@ export default function RecentPage() {
         {recentTools.length > 0 && (
           <button
             onClick={clearRecentTools}
-            className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover-highlight rounded-lg transition-colors"
+            className="px-4 py-2 text-sm text-red-500 rounded-lg"
           >
             清空记录
           </button>
@@ -27,15 +27,14 @@ export default function RecentPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {recentTools.map((tool) => (
-            <Link
+          {recentTools.map((tool, index) => (
+            <ToolCard
               key={tool.href}
               href={tool.href}
-              className="p-4 rounded-lg border bg-card hover:border-primary transition-colors"
-            >
-              <h2 className="font-semibold mb-1">{tool.label}</h2>
-              <p className="text-muted-foreground text-sm">{tool.category}</p>
-            </Link>
+              label={tool.label}
+              description={tool.category}
+              index={index}
+            />
           ))}
         </div>
       )}

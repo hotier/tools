@@ -154,18 +154,18 @@ export default function UnitConverterPage() {
       </div>
 
       <div className="mb-6">
-        <div className="flex flex-col md:flex-row items-end gap-6">
-          <div className="flex-1">
+        <div className="flex flex-col lg:flex-row items-end gap-4 lg:gap-6">
+          <div className="flex-1 w-full">
             <label className="block text-sm font-medium mb-2">从</label>
-            <div className="flex flex-col sm:flex-row gap-2 items-end">
+            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
               <input
                 type="number"
                 value={fromValue}
                 onChange={(e) => handleFromChange(e.target.value)}
-                className="flex-1 h-10 p-2 border rounded-lg bg-background"
+                className="flex-1 h-10 p-2 border rounded-lg bg-background min-w-0"
               />
               <Select value={fromUnit.toString()} onValueChange={(value) => handleFromUnitChange(Number(value))}>
-                <SelectTrigger className="w-full sm:w-32 !h-10">
+                <SelectTrigger className="w-full sm:w-36 !h-10">
                   <SelectValue placeholder="选择单位" />
                 </SelectTrigger>
                 <SelectContent>
@@ -183,7 +183,7 @@ export default function UnitConverterPage() {
             onClick={swapUnits}
             variant="outline"
             size="icon"
-            className="flex-shrink-0 !h-10 !w-10"
+            className="flex-shrink-0 !h-10 !w-10 self-center lg:self-end"
             aria-label="交换单位"
           >
             <svg className="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2652" width="20" height="20">
@@ -191,17 +191,17 @@ export default function UnitConverterPage() {
             </svg>
           </Button>
 
-          <div className="flex-1">
+          <div className="flex-1 w-full">
             <label className="block text-sm font-medium mb-2">到</label>
-            <div className="flex flex-col sm:flex-row gap-2 items-end">
+            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-end">
               <input
                 type="text"
                 value={toValue}
                 readOnly
-                className="flex-1 h-10 p-2 border rounded-lg bg-muted"
+                className="flex-1 h-10 p-2 border rounded-lg bg-muted min-w-0"
               />
               <Select value={toUnit.toString()} onValueChange={(value) => handleToUnitChange(Number(value))}>
-                <SelectTrigger className="w-full sm:w-32 !h-10">
+                <SelectTrigger className="w-full sm:w-36 !h-10">
                   <SelectValue placeholder="选择单位" />
                 </SelectTrigger>
                 <SelectContent>
