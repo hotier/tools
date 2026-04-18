@@ -33,8 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 🔥 修复1：注入 GITHUB_TOKEN，解决 changeset 报错
-      # 🔥 修复2：版本号推送稳定
+      # 核心：升级版本 + 推送回 release 分支
       - name: Version Update on release
         run: |
             GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx changeset version
@@ -43,12 +42,14 @@ jobs:
             git commit -m "Version Packages v${VERSION}"
             git push origin release
 
-      # 🔥 修复3：跨步骤变量失效 + 稳定合并 release → main
-      - name: Merge release into main
+      # 核心：自动解决冲突 + 合并到 main
+      - name: Merge release into main (auto resolve conflicts)
         run: |
-            # 重新获取版本号（解决跨步骤变量失效）
             VERSION=$(node -p "require('./package.json').version")
             git checkout main
-            git pull origin main --no-rebase
-            git merge --no-ff origin/release -m "Release: v${VERSION}"
+            git pull origin main
+            
+            # 🔥 关键：自动解决冲突！强制使用 release 分支的代码（无人工操作）
+            git merge --no-ff -X theirs origin/release -m "Release: v${VERSION}"
+            
             git push origin main
