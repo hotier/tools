@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # 项目开发规范
 
-涉及通用规则的页面及代码，在修改后把通用规则写入此文档
+[!important]涉及通用规则的页面及代码，在修改后把通用规则写入此文档
 
 ## 工具页面操作按钮规则
 

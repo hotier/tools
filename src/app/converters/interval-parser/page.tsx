@@ -698,14 +698,14 @@ export default function IntervalParserPage() {
           </Button>
           <Button
             onClick={exportTxt}
-            variant="secondary"
+            variant="gray-hover-blue"
             disabled={!input || validResults.length === 0}
           >
             导出 TXT
           </Button>
           <Button
             onClick={exportExcel}
-            variant="secondary"
+            variant="gray-hover-blue"
             disabled={!input || validResults.length === 0}
           >
             导出 Excel

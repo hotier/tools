@@ -10,7 +10,7 @@ export default function QRCodePage() {
   useTrackToolUsage("/image-tools/qrcode", "二维码生成");
   const [text, setText] = useState("https://example.com");
   const [qrDataUrl, setQrDataUrl] = useState("");
-  const [previewSize] = useState(224);
+  const [previewSize] = useState(246);
   const [downloadSize, setDownloadSize] = useState(256);
   const [errorCorrectionLevel, setErrorCorrectionLevel] = useState<"L" | "M" | "Q" | "H">("M");
 
@@ -41,6 +41,32 @@ export default function QRCodePage() {
 
   return (
     <ToolPageLayout title="二维码生成" href="/image-tools/qrcode">
+      <style jsx>{`
+        input[type="range"]::-webkit-slider-thumb {
+          appearance: none;
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: var(--thumb-color, #3b82f6);
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+          background: var(--thumb-hover-color, #2563eb);
+        }
+        input[type="range"]::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          background: var(--thumb-color, #3b82f6);
+          cursor: pointer;
+          border: none;
+          transition: background 0.2s;
+        }
+        input[type="range"]::-moz-range-thumb:hover {
+          background: var(--thumb-hover-color, #2563eb);
+        }
+      `}</style>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
@@ -62,8 +88,17 @@ export default function QRCodePage() {
               step="32"
               value={downloadSize}
               onChange={(e) => setDownloadSize(parseInt(e.target.value))}
-              className="w-full"
+              className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer dark:bg-blue-800"
+              style={{
+                '--thumb-color': '#3b82f6',
+                '--thumb-hover-color': '#2563eb'
+              } as React.CSSProperties}
             />
+            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+              {[128, 256, 384, 512].map((size) => (
+                <span key={size}>{size}px</span>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -73,7 +108,7 @@ export default function QRCodePage() {
                 <Button
                   key={level}
                   onClick={() => setErrorCorrectionLevel(level)}
-                  variant={errorCorrectionLevel === level ? "info" : "secondary"}
+                  variant={errorCorrectionLevel === level ? "default" : "secondary"}
                 >
                   {level}
                 </Button>
@@ -95,7 +130,7 @@ export default function QRCodePage() {
           {qrDataUrl && (
             <Button
               onClick={downloadQR}
-              variant="default"
+              variant="info"
               className="mt-4"
             >
               下载二维码

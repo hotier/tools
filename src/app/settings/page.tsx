@@ -2,6 +2,7 @@
 
 import { useTheme } from "@/components/ThemeProvider";
 import { useSettings } from "@/components/SettingsContext";
+import { Button } from "@/components/ui/button";
 import { APP_VERSION } from "@/config/version";
 
 export default function SettingsPage() {
@@ -26,17 +27,13 @@ export default function SettingsPage() {
               <label className="block text-sm font-medium mb-2">默认主题</label>
               <div className="flex gap-2">
                 {(["light", "dark", "system"] as const).map((t) => (
-                  <button
+                  <Button
                     key={t}
                     onClick={() => setTheme(t)}
-                    className={`px-4 py-2 rounded-lg transition-colors ${
-                      theme === t
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    }`}
+                    variant={theme === t ? "default" : "secondary"}
                   >
                     {t === "light" ? "浅色" : t === "dark" ? "深色" : "跟随系统"}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -52,14 +49,10 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => updateSettings({ showUsageStats: !settings.showUsageStats })}
-                  className={`w-12 h-6 rounded-full transition-colors flex-shrink-0 ${
-                    settings.showUsageStats ? "bg-primary" : "bg-muted"
-                  }`}
+                  className={`w-12 h-6 rounded-full transition-colors flex-shrink-0 ${settings.showUsageStats ? "bg-primary" : "bg-muted"}`}
                 >
                   <div
-                    className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                      settings.showUsageStats ? "translate-x-6" : "translate-x-0.5"
-                    }`}
+                    className={`w-5 h-5 rounded-full bg-white transition-transform ${settings.showUsageStats ? "translate-x-6" : "translate-x-0.5"}`}
                   />
                 </button>
               </div>
@@ -71,14 +64,10 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => updateSettings({ enableNotifications: !settings.enableNotifications })}
-                  className={`w-12 h-6 rounded-full transition-colors flex-shrink-0 ${
-                    settings.enableNotifications ? "bg-primary" : "bg-muted"
-                  }`}
+                  className={`w-12 h-6 rounded-full transition-colors flex-shrink-0 ${settings.enableNotifications ? "bg-primary" : "bg-muted"}`}
                 >
                   <div
-                    className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                      settings.enableNotifications ? "translate-x-6" : "translate-x-0.5"
-                    }`}
+                    className={`w-5 h-5 rounded-full bg-white transition-transform ${settings.enableNotifications ? "translate-x-6" : "translate-x-0.5"}`}
                   />
                 </button>
               </div>
@@ -92,12 +81,12 @@ export default function SettingsPage() {
                 <div className="font-medium">清除所有数据</div>
                 <div className="text-sm text-muted-foreground">删除所有本地存储的设置和记录</div>
               </div>
-              <button 
+              <Button 
                 onClick={handleClearData}
-                className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg hover:bg-destructive/90 transition-colors"
+                variant="destructive"
               >
                 清除
-              </button>
+              </Button>
             </div>
           </section>
 

@@ -1,14 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
-import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
 export const metadata: Metadata = {
-  title: "我的工具箱",
-  description: "个人常用工具集合",
+  title: "简序",
+  description: "常用工具集合",
+  icons: [
+    {
+      url: "/favicon.ico",
+      sizes: "32x32",
+      type: "image/x-icon",
+    },
+    {
+      url: "/favicon.ico",
+      sizes: "16x16",
+      type: "image/x-icon",
+    },
+  ],
 };
 
 export default function RootLayout({
@@ -17,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="zh-CN" suppressHydrationWarning className="font-sans">
       <head>
         <style
           dangerouslySetInnerHTML={{

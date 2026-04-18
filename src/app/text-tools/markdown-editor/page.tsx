@@ -138,18 +138,46 @@ const md = new MarkdownIt({
   linkify: true,
   typographer: true,
   highlight: function (str: string, lang: string): string {
-    const langLabel = lang && hljs.getLanguage(lang) 
-      ? `<span class="code-lang">${lang}</span>` 
-      : '';
-    
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return `<pre class="hljs relative">${langLabel}<code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
-      } catch {
-        // ignore
+    try {
+      const langLabel = lang && hljs.getLanguage(lang) 
+        ? `<span class="code-lang">${lang}</span>` 
+        : '';
+      
+      // 安全的HTML转义函数
+      const escapeHtml = (text: string): string => {
+        if (MarkdownIt.prototype && MarkdownIt.prototype.utils && MarkdownIt.prototype.utils.escapeHtml) {
+          return MarkdownIt.prototype.utils.escapeHtml(text);
+        }
+        // 备用转义方法
+        return text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+      
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          return `<pre class="hljs relative">${langLabel}<code>${hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
+        } catch {
+          // ignore
+        }
       }
+      return `<pre class="hljs relative">${langLabel}<code>${escapeHtml(str)}</code></pre>`;
+    } catch (error) {
+      console.error('Highlight error:', error);
+      // 备用转义方法
+      const escapeHtml = (text: string): string => {
+        return text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+      return `<pre class="hljs relative"><code>${escapeHtml(str)}</code></pre>`;
     }
-    return `<pre class="hljs relative">${langLabel}<code>${MarkdownIt.prototype.utils.escapeHtml(str)}</code></pre>`;
   },
 });
 
@@ -165,9 +193,20 @@ export default function MarkdownEditorPage() {
   const previewRef = useRef<HTMLDivElement>(null);
   const isScrolling = useRef<"editor" | "preview" | null>(null);
 
-  const html = useMemo(() => {
-    return md.render(markdown);
-  }, [markdown]);
+  const [html, setHtml] = useState('');
+  const [lastValidHtml, setLastValidHtml] = useState('');
+
+  useEffect(() => {
+    try {
+      const renderedHtml = md.render(markdown);
+      setHtml(renderedHtml);
+      setLastValidHtml(renderedHtml);
+    } catch (error) {
+      console.error('Markdown render error:', error);
+      // 渲染失败时显示上一次成功渲染的结果
+      setHtml(lastValidHtml || '<div class="text-gray-400 italic">请输入Markdown内容</div>');
+    }
+  }, [markdown, lastValidHtml]);
 
   const handleEditorScroll = () => {
     if (isScrolling.current === "preview") return;

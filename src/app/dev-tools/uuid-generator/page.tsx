@@ -82,8 +82,8 @@ export default function UUIDGeneratorPage() {
               min="1"
               max="100"
               value={count}
-              onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="w-20 p-2 border rounded-lg bg-background"
+              onChange={(e) => setCount(Math.min(100, Math.max(1, parseInt(e.target.value) || 1)))} 
+              className="w-20 h-10 p-2 border rounded-lg font-mono text-sm bg-background"
             />
           </div>
           <label className="flex items-center gap-2 cursor-pointer">

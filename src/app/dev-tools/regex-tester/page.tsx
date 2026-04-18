@@ -4,11 +4,12 @@ import { useState, useMemo } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function RegexTesterPage() {
   useTrackToolUsage("/dev-tools/regex-tester", "正则测试");
   const [pattern, setPattern] = useState("");
-  const [flags, setFlags] = useState("g");
+  const [flags, setFlags] = useState<string>("g");
   const [testString, setTestString] = useState("");
   const [error, setError] = useState("");
 
@@ -57,27 +58,37 @@ export default function RegexTesterPage() {
         <div className="flex gap-4">
           <div className="flex-1">
             <label className="block text-sm font-medium mb-2">正则表达式</label>
-            <div className="flex">
-              <span className="inline-flex items-center px-3 border border-r-0 rounded-l-lg bg-muted text-muted-foreground">
+            <div className="flex items-center">
+              <span className="inline-flex items-center px-3 border rounded-l-lg bg-muted text-muted-foreground h-8">
                 /
               </span>
               <input
                 type="text"
                 value={pattern}
                 onChange={(e) => setPattern(e.target.value)}
-                className="flex-1 p-2 border bg-background font-mono"
+                className="flex-1 p-2 border border-l-0 border-r-0 bg-background font-mono h-8"
                 placeholder="输入正则表达式"
               />
-              <span className="inline-flex items-center px-3 border border-l-0 rounded-r-lg bg-muted text-muted-foreground">
+              <span className="inline-flex items-center px-3 border border-l-0 bg-muted text-muted-foreground h-8">
                 /
               </span>
-              <input
-                type="text"
-                value={flags}
-                onChange={(e) => setFlags(e.target.value)}
-                className="w-20 p-2 border rounded-r-lg bg-background font-mono"
-                placeholder="标志"
-              />
+              <Select value={flags} onValueChange={(value) => setFlags(value)}>
+                <SelectTrigger className="w-24 rounded-l-none rounded-r-lg border-l-0">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="g">g</SelectItem>
+                  <SelectItem value="i">i</SelectItem>
+                  <SelectItem value="m">m</SelectItem>
+                  <SelectItem value="gi">gi</SelectItem>
+                  <SelectItem value="gm">gm</SelectItem>
+                  <SelectItem value="im">im</SelectItem>
+                  <SelectItem value="gim">gim</SelectItem>
+                  <SelectItem value="s">s</SelectItem>
+                  <SelectItem value="u">u</SelectItem>
+                  <SelectItem value="y">y</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
@@ -110,7 +121,7 @@ export default function RegexTesterPage() {
 
       {results && results.length > 0 && (
         <div className="mt-4 p-4 bg-secondary/50 rounded-lg mb-6">
-          <h3 className="font-semibold mb-2">匹配详情</h3>
+          <h3 className="font-semibold mb-2 text-sm">匹配详情</h3>
           <div className="text-sm">
             找到 <span className="font-bold text-primary">{results.length}</span> 个匹配:
           </div>
@@ -127,7 +138,7 @@ export default function RegexTesterPage() {
       <div className="flex flex-wrap gap-2 justify-center">
         <Button
           onClick={loadSampleData}
-          variant="outline"
+          variant="secondary"
         >
           示例数据
         </Button>
