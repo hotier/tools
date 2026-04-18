@@ -33,23 +33,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 核心：升级版本 + 推送回 release 分支
+      # 核心：升级版本 + 同步lock文件 + 提交推送
       - name: Version Update on release
         run: |
-            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx changeset version
-            VERSION=$(node -p "require('./package.json').version")
-            git add .
-            git commit -m "Version Packages v${VERSION}"
-            git push origin release
+          # 1. 执行版本升级
+          GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} npx changeset version
+          
+          # 2. 🔥 关键修复：同步 package-lock.json 版本（解决不一致！）
+          npm install --package-lock-only
+          
+          # 3. 判断是否有文件修改（有变更=需要发布，无变更=跳过）
+          if git diff --quiet; then
+            echo "✅ 无待发布变更，无需升级版本"
+            exit 0
+          fi
+          
+          # 4. 有变更：提交所有修改（package.json + lock + changelog）
+          VERSION=$(node -p "require('./package.json').version")
+          git add .
+          git commit -m "Version Packages v${VERSION}"
+          git push origin release
 
-      # 核心：自动解决冲突 + 合并到 main
-      - name: Merge release into main (auto resolve conflicts)
+      # 自动合并到 main（仅版本升级成功后执行）
+      - name: Merge release into main
+        if: success()
         run: |
-            VERSION=$(node -p "require('./package.json').version")
-            git checkout main
-            git pull origin main
-            
-            # 🔥 关键：自动解决冲突！强制使用 release 分支的代码（无人工操作）
-            git merge --no-ff -X theirs origin/release -m "Release: v${VERSION}"
-            
-            git push origin main
+          VERSION=$(node -p "require('./package.json').version")
+          git checkout main
+          git pull origin main
+          # 强制使用 release 代码覆盖冲突
+          git merge --no-ff -X theirs origin/release -m "Release: v${VERSION}"
+          git push origin main
