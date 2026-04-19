@@ -1,10 +1,14 @@
 import { neon } from '@neondatabase/serverless';
 
-// 从环境变量获取数据库连接字符串
 const connectionString = process.env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is not set');
-}
+const db = connectionString ? neon(connectionString) : null;
 
-export const db = neon(connectionString);
+export { db };
+
+export function getDb() {
+  if (!db) {
+    throw new Error('DATABASE_URL environment variable is not set');
+  }
+  return db;
+}

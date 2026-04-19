@@ -1,6 +1,6 @@
 import tools from "@/data/tools";
 import { extractShortDescription } from "@/lib/utils";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import ToolCard from "@/components/ToolCard";
 
 type ToolInfo = {
@@ -23,6 +23,7 @@ function toCST(utcDate: string | Date): string {
 
 async function getNewTools(): Promise<ToolInfo[]> {
   try {
+    const db = getDb();
     const usageData = await db`
       SELECT tool_path, usage_count, created_at
       FROM tool_usage
@@ -57,17 +58,14 @@ async function getNewTools(): Promise<ToolInfo[]> {
     return newTools;
   } catch (error) {
     console.error('Error fetching new tools from database:', error);
-    // 数据库连接失败时，使用本地工具数据作为 fallback
     const allTools = tools.flatMap(category =>
       category.items.map(item => ({
         href: item.href,
         title: item.label,
         description: extractShortDescription(item.description),
-        // 使用当前日期作为默认日期
         date: toCST(new Date())
       }))
     );
-    // 取前 5 个工具
     return allTools.slice(0, 5);
   }
 }
@@ -97,7 +95,7 @@ async function NewToolsList() {
   );
 }
 
-export const revalidate = 3600; // 缓存1小时
+export const revalidate = 3600;
 
 export default function NewPage() {
   return (
