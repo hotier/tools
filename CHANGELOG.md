@@ -1,3 +1,19 @@
+# 更新日志
+
+所有重要的变更都将记录在此文件中。
+
+## [0.6.0](https://github.com/hotier/tools/compare/v0.5.4...v0.6.0) (2026-04-19)
+
+### ✨ 新功能
+
+* add chinese localization to semantic-release config ([1aa73e3](https://github.com/hotier/tools/commit/1aa73e3053e9f0b37285afa4c4456938042ffd16))
+* add package-lock.json update step to workflow ([5e94106](https://github.com/hotier/tools/commit/5e94106cb6c89e8a6142ba72cdf6cb7d15b1f72c))
+
+### 🐛 修复
+
+* add missing conventional-changelog-conventionalcommits dependency ([4561522](https://github.com/hotier/tools/commit/45615224968fd84938d135a8d411e664b24e1e9f))
+* update package-lock.json version to match package.json and add to semantic-release config ([735a20e](https://github.com/hotier/tools/commit/735a20ead118a655d55b8c2a46af720cb663d197))
+
 ## [0.5.4](https://github.com/hotier/tools/compare/v0.5.3...v0.5.4) (2026-04-19)
 
 
