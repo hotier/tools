@@ -1,3 +1,10 @@
+## [0.5.3](https://github.com/hotier/tools/compare/v0.5.2...v0.5.3) (2026-04-19)
+
+
+### Bug Fixes
+
+* update package-lock.json version to match package.json ([96d4880](https://github.com/hotier/tools/commit/96d48805db1e3e424b275387fba70d0a24408bfc))
+
 ## [0.5.2](https://github.com/hotier/tools/compare/v0.5.1...v0.5.2) (2026-04-19)
 
 
