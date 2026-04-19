@@ -50,10 +50,13 @@ jobs:
       - name: Merge release into main
         if: success()
         run: |
-          git stash
+          # 保存当前状态（如果有更改）
+          git stash || echo "No changes to stash"
           git checkout main
           git pull origin main
-          git merge --no-ff -X theirs origin/release -m "Release: merge release into main"
+          # 合并本地 release 分支到 main 分支
+          git merge --no-ff -X theirs release -m "Release: merge release into main"
           git push origin main
           git checkout release
-          git stash pop
+          # 恢复暂存的更改（如果有）
+          git stash pop || echo "No stash to pop"
