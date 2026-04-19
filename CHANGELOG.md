@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/hotier/tools/compare/v0.5.0...v0.5.1) (2026-04-19)
+
+
+### Bug Fixes
+
+* stash changes before checkout main in workflow ([550dd24](https://github.com/hotier/tools/commit/550dd24dd858febcc9e97aba339bc6e48dfa78dd))
+
 # [0.5.0](https://github.com/hotier/tools/compare/v0.4.0...v0.5.0) (2026-04-19)
 
 
