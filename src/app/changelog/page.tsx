@@ -156,11 +156,6 @@ function VersionCard({ entry }: { entry: VersionEntry }) {
         <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-xl font-semibold">v{entry.version}</h2>
-            {entry.changeType && (
-              <span className="px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded">
-                {entry.changeType}
-              </span>
-            )}
             {entry.isLatest && (
               <span className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
                 最新
