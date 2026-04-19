@@ -1,3 +1,10 @@
+## [0.5.4](https://github.com/hotier/tools/compare/v0.5.3...v0.5.4) (2026-04-19)
+
+
+### Bug Fixes
+
+* remove version type label from changelog page ([f0bac45](https://github.com/hotier/tools/commit/f0bac45d1e33a7a9f68ac8447f07d36bb8434a58))
+
 ## [0.5.3](https://github.com/hotier/tools/compare/v0.5.2...v0.5.3) (2026-04-19)
 
 
