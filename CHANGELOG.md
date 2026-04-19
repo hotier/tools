@@ -2,6 +2,16 @@
 
 所有重要的变更都将记录在此文件中。
 
+## [0.7.0](https://github.com/hotier/tools/compare/v0.6.1...v0.7.0) (2026-04-19)
+
+### ✨ 新功能
+
+* 保留 changelog 中的 emoji 图标 ([cdf7e2b](https://github.com/hotier/tools/commit/cdf7e2bbd3b461ebb96acbe68e9174ed800586b1))
+
+### 📝 文档
+
+* 合并 changelog 页面优化，保留 emoji 图标 ([77502c0](https://github.com/hotier/tools/commit/77502c0d4e820c49fa34c4e9e5c349819181c861))
+
 ## [0.6.1](https://github.com/hotier/tools/compare/v0.6.0...v0.6.1) (2026-04-19)
 
 ### 📝 文档
