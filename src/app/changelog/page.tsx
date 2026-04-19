@@ -37,7 +37,7 @@ function cleanText(text: string): string {
 }
 
 function parseVersionBlock(block: string, index: number): VersionEntry | null {
-  const versionMatch = block.match(/^#\s+\[?([\d.]+)\]?/m) || block.match(/^##\s+\[?([\d.]+)\]?/m);
+  const versionMatch = block.match(/^##\s+\[([\d.]+)\]/m);
   if (!versionMatch) return null;
   const version = versionMatch[1];
 
@@ -68,32 +68,21 @@ function parseVersionBlock(block: string, index: number): VersionEntry | null {
     if (!trimmed) continue;
 
     // 跳过版本号行
-    if (trimmed.match(/^#\s+\[?[\d.]+\]?/) || trimmed.match(/^##\s+\[?[\d.]+\]?/)) {
+    if (trimmed.match(/^##\s+\[[\d.]+\]/)) {
       continue;
     }
 
-    // 处理 section 标题（Semantic Release 格式）
+    // 处理 section 标题（支持 emoji 格式）
     if (trimmed.startsWith("### ")) {
       if (currentTitle && currentItems.length > 0) {
         sections.push({ title: currentTitle, items: [...currentItems] });
       }
       let title = trimmed.replace(/^###\s+/, "").replace(/\*\*/g, "");
-      // 映射 Semantic Release 标题到中文
-      if (title === "Bug Fixes" || title === "fixes" || title === "修复") {
-        currentTitle = "修复";
-      } else if (title === "Features" || title === "features" || title === "新增" || title === "新功能") {
-        currentTitle = "新增";
-      } else if (title === "Performance Improvements" || title === "优化" || title === "改进" || title === "changed") {
-        currentTitle = "优化";
-      } else if (title === "BREAKING CHANGES" || title === "删除" || title === "removed") {
-        currentTitle = "删除";
-      } else {
-        currentTitle = "其他";
-      }
+      // 保留原始带 emoji 的标题
+      currentTitle = title;
       currentItems = [];
     } else if (trimmed.startsWith("* ")) {
-      // 处理普通的变更行（Semantic Release 格式）
-      // 格式: * stash changes before checkout main in workflow ([550dd24](https://github.com/hotier/tools/commit/550dd24dd858febcc9e97aba339bc6e48dfa78dd))
+      // 处理普通的变更行
       let item = cleanText(trimmed.slice(2));
       // 移除提交哈希链接
       item = item.replace(/\([^)]+\)/g, "").trim();
@@ -102,29 +91,6 @@ function parseVersionBlock(block: string, index: number): VersionEntry | null {
           currentTitle = "其他";
         }
         currentItems.push(item);
-      }
-    } else if (trimmed.startsWith("  * ") || trimmed.startsWith("\t* ")) {
-      // 处理缩进的变更行
-      const item = cleanText(trimmed.replace(/^[\s]+\*\s/, ""));
-      if (item && currentItems.length > 0) {
-        currentItems[currentItems.length - 1] += " " + item;
-      }
-    } else if (trimmed.startsWith("- ")) {
-      // 处理普通的变更行（传统格式）
-      let item = cleanText(trimmed.slice(2));
-      // 移除提交哈希链接
-      item = item.replace(/\([^)]+\)/g, "").trim();
-      if (item) {
-        if (!currentTitle) {
-          currentTitle = "其他";
-        }
-        currentItems.push(item);
-      }
-    } else if (trimmed.startsWith("  - ") || trimmed.startsWith("\t- ")) {
-      // 处理缩进的变更行（传统格式）
-      const item = cleanText(trimmed.replace(/^[\s]+-\s/, ""));
-      if (item && currentItems.length > 0) {
-        currentItems[currentItems.length - 1] += " " + item;
       }
     }
   }
@@ -187,8 +153,8 @@ function VersionCard({ entry }: { entry: VersionEntry }) {
 
 export default async function ChangelogPage() {
   const changelog = await getChangelog();
-  // 修复版本块分割，确保正确分割版本
-  const blocks = changelog.split(/(?=^#\s+|^##\s+)/m).filter(Boolean);
+  // 修复版本块分割，确保正确分割版本（只分割 ## 开头的版本号）
+  const blocks = changelog.split(/(?=^##\s+\[)/m).filter(Boolean);
   const versions = blocks.map((b, i) => parseVersionBlock(b, i)).filter((v): v is VersionEntry => v !== null).slice(0, 10);
 
   return (
