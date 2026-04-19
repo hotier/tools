@@ -41,6 +41,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
+      - name: Update package-lock.json
+        run: |
+          npm install --package-lock-only
+          git add package-lock.json
+          git commit -m "chore(release): update package-lock.json" || echo "No changes to package-lock.json"
+
       - name: Merge release into main
         if: success()
         run: |
