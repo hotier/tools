@@ -45,18 +45,8 @@ async function getPopularTools(): Promise<ToolInfo[]> {
     return popularTools;
   } catch (error) {
     console.error('Error fetching popular tools from database:', error);
-    // 数据库连接失败时，使用本地工具数据作为 fallback
-    const allTools = tools.flatMap(category =>
-      category.items.map(item => ({
-        href: item.href,
-        title: item.label,
-        description: extractShortDescription(item.description),
-        // 使用随机使用次数作为默认值
-        usage: Math.floor(Math.random() * 1000) + 1
-      }))
-    );
-    // 按使用次数排序并取前 5 个
-    return allTools.sort((a, b) => b.usage - a.usage).slice(0, 5);
+    // 数据库连接失败时，返回空数组
+    return [];
   }
 }
 

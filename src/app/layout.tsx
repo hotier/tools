@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -114,6 +115,7 @@ export default function RootLayout({
             <span style={{ color: 'var(--muted-foreground)', fontSize: '14px' }}>加载中...</span>
           </div>
         </div>
+        <Toaster />
       </body>
     </html>
   );

@@ -3,11 +3,13 @@
 import { useState, useMemo } from "react";
 import { useTrackToolUsage } from "@/components/useTrackToolUsage";
 import { ToolPageLayout } from "@/components/ToolPageLayout";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function RegexTesterPage() {
   useTrackToolUsage("/dev-tools/regex-tester", "正则测试");
+  const { toast } = useToast();
   const [pattern, setPattern] = useState("");
   const [flags, setFlags] = useState<string>("g");
   const [testString, setTestString] = useState("");
@@ -50,6 +52,13 @@ export default function RegexTesterPage() {
     setFlags("g");
     setTestString("");
     setError("");
+  };
+
+  const copyResults = async () => {
+    if (results && results.length > 0) {
+      await navigator.clipboard.writeText(results.join("\n"));
+      toast.success("复制成功");
+    }
   };
 
   return (
@@ -127,7 +136,7 @@ export default function RegexTesterPage() {
           </div>
           <div className="mt-2 flex flex-wrap gap-2">
             {results.map((match, i) => (
-              <span key={i} className="px-2 py-1 bg-primary/20 rounded text-sm font-mono">
+              <span key={i} className="px-2 py-1 bg-yellow-300 dark:bg-yellow-600 rounded text-sm font-mono">
                 {match}
               </span>
             ))}
@@ -137,10 +146,16 @@ export default function RegexTesterPage() {
 
       <div className="flex flex-wrap gap-2 justify-center">
         <Button
-          onClick={loadSampleData}
-          variant="secondary"
+          onClick={() => {
+            if (!pattern && !testString) {
+              loadSampleData();
+            } else {
+              copyResults();
+            }
+          }}
+          variant={pattern || testString ? "success" : "secondary"}
         >
-          示例数据
+          {pattern || testString ? "复制结果" : "示例数据"}
         </Button>
         <Button
           onClick={clearAll}

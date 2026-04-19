@@ -25,16 +25,16 @@ const buttonVariants = cva(
           "text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-200 dark:active:bg-gray-600",
         // 红色按钮 - 危险操作/清空
         destructive:
-          "bg-red-100 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white active:bg-red-700",
+          "bg-red-100 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white active:bg-red-700 dark:bg-red-900/30 dark:border-red-500/50 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white dark:active:bg-red-700",
         // 黄色按钮 - 警告操作
         warning:
-          "bg-yellow-500 text-white hover:bg-yellow-600 active:bg-yellow-700",
+          "bg-yellow-500 text-white hover:bg-yellow-600 active:bg-yellow-700 dark:bg-yellow-600 dark:hover:bg-yellow-500 dark:active:bg-yellow-700",
         // 绿色按钮 - 成功/复制结果
         success:
-          "bg-green-100 border border-green-200 text-green-500 hover:bg-green-500 hover:text-white active:bg-green-600",
+          "bg-green-100 border border-green-200 text-green-500 hover:bg-green-500 hover:text-white active:bg-green-600 dark:bg-green-900/30 dark:border-green-500/50 dark:text-green-400 dark:hover:bg-green-600 dark:hover:text-white dark:active:bg-green-700",
         // 蓝色信息按钮
         info:
-          "bg-blue-100 border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white active:bg-blue-700",
+          "bg-blue-100 border border-blue-300 text-blue-700 hover:bg-blue-600 hover:text-white active:bg-blue-700 dark:bg-blue-900/30 dark:border-blue-500/50 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white dark:active:bg-blue-700",
         // 链接样式
         link: "text-blue-600 underline-offset-4 hover:underline hover:bg-blue-100 active:bg-blue-200",
         // Tab 标签样式 - 选中时蓝色背景，未选中时灰色背景悬停变蓝

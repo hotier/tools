@@ -11,7 +11,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
-      className="toaster group"
+      className="toaster group [&_[data-sonner-toast]]:!top-[33vh]"
+      position="top-center"
       toastOptions={{
         classNames: {
           toast: "group toast w-fit max-w-[90vw] px-4 py-3 rounded-lg bg-background text-foreground border border-border shadow-lg flex flex-row items-center gap-2",

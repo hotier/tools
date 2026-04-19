@@ -198,7 +198,7 @@ export function Header() {
           </div>
         </div>
 
-        <div className="flex-shrink-0 flex items-center space-x-1">
+        <div className="flex-shrink-0 flex items-center space-x-1 ml-auto">
           <nav className="hidden lg:flex items-center space-y-1">
             <Link
               href="/"
@@ -257,7 +257,11 @@ export function Header() {
                 type="text"
                 placeholder=""
                 value={searchQuery ?? ""}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchOpen(true);
+                }}
+                onFocus={() => setIsSearchOpen(true)}
                 className="w-full pl-12 pr-4 py-2 text-sm text-foreground border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary relative z-0"
               />
               
@@ -289,6 +293,36 @@ export function Header() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
               </svg>
+
+              {isSearchOpen && searchQuery && filteredTools.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg max-h-80 overflow-y-auto z-50">
+                  {filteredTools.map((tool) => (
+                    <button
+                      key={tool.href}
+                      onClick={() => handleToolClick(tool.href)}
+                      className="w-full px-4 py-2 text-left hover-highlight transition-colors flex items-center justify-between"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm">{highlightText(tool.label, searchQuery)}</div>
+                        {tool.descSnippet && (
+                          <div className="text-xs text-muted-foreground mt-0.5 truncate">
+                            {highlightText(tool.descSnippet, searchQuery)}
+                          </div>
+                        )}
+                      </div>
+                      <span className="text-xs text-muted-foreground ml-2 flex-shrink-0">
+                        {tool.category}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {isSearchOpen && searchQuery && filteredTools.length === 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-card border rounded-lg shadow-lg p-4 z-50">
+                  <p className="text-sm text-muted-foreground text-center">未找到匹配的工具</p>
+                </div>
+              )}
             </div>
             <nav className="flex flex-col space-y-1">
               <Link

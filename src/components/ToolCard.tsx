@@ -77,10 +77,15 @@ export default function ToolCard({
             )}
           </div>
         ) : (
-          <>
-            <h2 className="font-semibold mb-1">{label}</h2>
+          <div className="flex flex-col">
+            <div className="flex justify-between items-start mb-1">
+              <h2 className="font-semibold">{label}</h2>
+              {showDate && date && (
+                <span className="text-xs text-muted-foreground">{date}</span>
+              )}
+            </div>
             <p className="text-muted-foreground text-sm line-clamp-1">{description}</p>
-          </>
+          </div>
         )}
       </Link>
     </motion.div>
