@@ -9,10 +9,12 @@ import { RecentToolsProvider } from "@/components/RecentToolsContext";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Footer } from "@/components/layout/Footer";
-import UpdateChecker from "@/components/UpdateChecker";
+import { registerConsoleUtils } from "@/app/globals";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
+    registerConsoleUtils();
+
     let scrollTimeout: NodeJS.Timeout;
 
     const handleScroll = (e: Event) => {
@@ -54,7 +56,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
                   <Footer />
                 </div>
               </div>
-              <UpdateChecker />
             </SidebarProvider>
           </RecentToolsProvider>
         </SearchProvider>

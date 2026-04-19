@@ -2,7 +2,6 @@
 
 import { ReactNode } from "react";
 import { ToolDescription } from "./ToolDescription";
-import { Toaster } from "@/components/ui/sonner";
 
 interface ToolPageLayoutProps {
   title: string;
@@ -24,12 +23,6 @@ export function ToolPageLayout({ title, href, children, actions }: ToolPageLayou
       </div>
 
       <ToolDescription href={href} />
-      
-      <div className="absolute left-1/2 top-1/3 transform -translate-x-1/2 -translate-y-1/2 z-50">
-        <div className="w-auto max-w-[200px]">
-          <Toaster />
-        </div>
-      </div>
     </div>
   );
 }

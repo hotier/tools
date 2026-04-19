@@ -52,6 +52,17 @@ export function RecentToolsProvider({ children }: { children: ReactNode }) {
     setRecentTools([]);
   }, []);
 
+  useEffect(() => {
+    const handleClearRecentTools = () => {
+      setRecentTools([]);
+    };
+
+    window.addEventListener("clear-recent-tools", handleClearRecentTools);
+    return () => {
+      window.removeEventListener("clear-recent-tools", handleClearRecentTools);
+    };
+  }, []);
+
   return (
     <RecentToolsContext.Provider value={{ recentTools, addRecentTool, clearRecentTools }}>
       {children}

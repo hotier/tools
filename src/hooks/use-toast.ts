@@ -5,7 +5,7 @@ export function useToast() {
     toast: {
       error: (message: string) => {
         toast(message, {
-          className: "bg-red-100 border border-red-200 text-red-600",
+          className: "bg-red-100 border border-red-200 text-red-600 dark:bg-red-900/50 dark:border-red-700 dark:text-red-300",
           style: {
             background: "#fef2f2",
             borderColor: "#fecaca",
@@ -15,7 +15,7 @@ export function useToast() {
       },
       success: (message: string) => {
         toast(message, {
-          className: "bg-green-100 border border-green-200 text-green-600",
+          className: "bg-green-100 border border-green-200 text-green-600 dark:bg-green-900/50 dark:border-green-700 dark:text-green-300",
           style: {
             background: "#f0fdf4",
             borderColor: "#bbf7d0",
@@ -25,7 +25,7 @@ export function useToast() {
       },
       info: (message: string) => {
         toast(message, {
-          className: "bg-blue-100 border border-blue-200 text-blue-600",
+          className: "bg-blue-100 border border-blue-200 text-blue-600 dark:bg-blue-900/50 dark:border-blue-700 dark:text-blue-300",
           style: {
             background: "#eff6ff",
             borderColor: "#bfdbfe",
