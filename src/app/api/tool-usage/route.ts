@@ -1,4 +1,4 @@
-import { db } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tool path is required' }, { status: 400 });
     }
 
+    const db = getDb();
     await db`
       INSERT INTO tool_usage (tool_path, usage_count)
       VALUES (${toolPath}, 1)
@@ -28,8 +29,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'popular';
 
+    const db = getDb();
+
     if (type === 'new') {
-      // 获取最新添加的工具（按 created_at 排序）
       const tools = await db`
         SELECT tool_path, usage_count, created_at
         FROM tool_usage
@@ -37,7 +39,6 @@ export async function GET(request: NextRequest) {
       `;
       return NextResponse.json(tools);
     } else {
-      // 获取使用次数最多的工具
       const tools = await db`
         SELECT tool_path, usage_count, created_at
         FROM tool_usage

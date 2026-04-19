@@ -1,6 +1,6 @@
 import tools from "@/data/tools";
 import { extractShortDescription } from "@/lib/utils";
-import { db } from "@/lib/db";
+import { getDb } from "@/lib/db";
 import ToolCard from "@/components/ToolCard";
 
 type ToolInfo = {
@@ -12,6 +12,7 @@ type ToolInfo = {
 
 async function getPopularTools(): Promise<ToolInfo[]> {
   try {
+    const db = getDb();
     const usageData = await db`
       SELECT tool_path, usage_count
       FROM tool_usage
@@ -45,7 +46,6 @@ async function getPopularTools(): Promise<ToolInfo[]> {
     return popularTools;
   } catch (error) {
     console.error('Error fetching popular tools from database:', error);
-    // 数据库连接失败时，返回空数组
     return [];
   }
 }
@@ -75,7 +75,7 @@ async function PopularToolsList() {
   );
 }
 
-export const revalidate = 3600; // 缓存1小时
+export const revalidate = 3600;
 
 export default function PopularPage() {
   return (
