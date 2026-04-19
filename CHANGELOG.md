@@ -2,6 +2,12 @@
 
 所有重要的变更都将记录在此文件中。
 
+## [0.6.1](https://github.com/hotier/tools/compare/v0.6.0...v0.6.1) (2026-04-19)
+
+### 📝 文档
+
+* 翻译 CHANGELOG.md 中的英文提交说明为中文 ([5a7b711](https://github.com/hotier/tools/commit/5a7b7117bca0d9c198edc64414f825bea400d9f3))
+
 ## [0.6.0](https://github.com/hotier/tools/compare/v0.5.4...v0.6.0) (2026-04-19)
 
 ### ✨ 新功能
