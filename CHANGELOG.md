@@ -1,3 +1,11 @@
+## [0.5.2](https://github.com/hotier/tools/compare/v0.5.1...v0.5.2) (2026-04-19)
+
+
+### Bug Fixes
+
+* restore use-toast hook ([294dce2](https://github.com/hotier/tools/commit/294dce2e0b1467d9adf1ede1f79d650d63a2c0d3))
+* update changelog parsing for semantic release format ([dcebc07](https://github.com/hotier/tools/commit/dcebc07b8913b98cdff07798e130258e61beb11d))
+
 ## [0.5.1](https://github.com/hotier/tools/compare/v0.5.0...v0.5.1) (2026-04-19)
 
 
@@ -24,4 +32,3 @@
 * initial commit ([90f5956](https://github.com/hotier/tools/commit/90f59563ea72973d65f2e78e40f36fdc88fabb14))
 * 优化搜索框、工具页面样式及新增工具使用追踪 ([975c040](https://github.com/hotier/tools/commit/975c040d24baa0dd16ca48f51cdf14bbce689287))
 * 更新工具页面样式和组件优化 ([6bf1699](https://github.com/hotier/tools/commit/6bf169946267b5a87e5b1540ac948afbf4decc97))
-
