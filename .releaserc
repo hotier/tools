@@ -1,17 +1,39 @@
 {
   "branches": ["main", "release"],
   "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
+    ["@semantic-release/commit-analyzer", {
+      "preset": "conventionalcommits",
+      "releaseRules": [
+        {"type": "docs", "release": "patch"},
+        {"type": "refactor", "release": "patch"},
+        {"type": "style", "release": "patch"}
+      ]
+    }],
+    ["@semantic-release/release-notes-generator", {
+      "preset": "conventionalcommits",
+      "presetConfig": {
+        "types": [
+          {"type": "feat", "section": "✨ 新功能"},
+          {"type": "fix", "section": "🐛 修复"},
+          {"type": "chore", "section": "🔧 维护"},
+          {"type": "docs", "section": "📝 文档"},
+          {"type": "style", "section": "🎨 样式"},
+          {"type": "refactor", "section": "♻️ 重构"},
+          {"type": "perf", "section": "⚡ 性能"},
+          {"type": "test", "section": "🧪 测试"}
+        ]
+      }
+    }],
     ["@semantic-release/changelog", {
-      "changelogFile": "CHANGELOG.md"
+      "changelogFile": "CHANGELOG.md",
+      "changelogTitle": "# 更新日志\n\n所有重要的变更都将记录在此文件中。"
     }],
     ["@semantic-release/npm", {
       "npmPublish": false
     }],
     ["@semantic-release/git", {
       "assets": ["CHANGELOG.md", "package.json", "package-lock.json"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]"
+      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
     }],
     "@semantic-release/github"
   ]
