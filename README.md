@@ -79,67 +79,30 @@ npm run start
 - **代码高亮**: [highlight.js](https://highlightjs.org/)
 - **二维码**: [qrcode](https://www.npmjs.com/package/qrcode)
 - **Excel**: [xlsx](https://www.npmjs.com/package/xlsx)
-- **版本管理**: [@changesets/cli](https://www.changesets.com/)
+- **版本管理**: [Semantic Release](https://semantic-release.gitbook.io/semantic-release/)
 
 ## 🔄 版本管理
 
-本项目使用 **Changesets + GitHub Actions + Vercel** 实现自动化版本发布流程，全链路打通：
-**开发→变更→release分支→自动版本更新→main分支→Vercel部署**
+本项目使用 **Semantic Release + GitHub Actions + Vercel** 实现自动化版本发布流程：
+**开发→commit→release分支→CI构建→自动版本更新→GitHub Release→合并main→Vercel部署**
 
-### 🚀 自动化发布流程（推荐）
+### 📋 Commit 规范
 
-通过 GitHub Actions 实现完全自动化的版本管理和部署：
+项目遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
 
-```bash
-# 1️⃣ 日常开发（可以在main分支或任意分支）
-git checkout main
-# ... 编写代码 ...
-
-# 2️⃣ 准备发布：切换到release分支，合并你的代码
-git checkout release
-git merge main  # 或 cherry-pick 需要发布的commit
-
-# 3️⃣ 记录功能变更
-npx changeset
-# 选择变更类型，输入功能描述
-
-# 4️⃣ 推送到release分支，触发自动化流程
-git add .
-git commit -m "你的提交信息"
-git push origin release
-```
-
-**自动化流程会自动完成：**
-- ✅ 合并release分支到main分支（带原始提交信息）
-- ✅ 运行 `changeset version` 更新版本号和CHANGELOG
-- ✅ 提交并推送到main分支
-- ✅ 触发Vercel自动部署（只有main分支会触发）
-
-### ⚙️ 自动化流程配置
-
-- **GitHub Actions Workflow**: `.github/workflows/release.yml`
-- **Vercel配置**: `vercel.json` - 只允许main分支部署
-- **避免循环部署**: Vercel只监听main分支，workflow推送到release分支不会触发部署
-
-### 📋 传统手动发布 SOP（4 步完成发布）
-
-```bash
-# 1️⃣ 开发功能
-git checkout -b feature/xxx
-# ... 编写代码 ...
-
-# 2️⃣ 记录功能变更
-npm run change
-# 选择变更类型，输入功能描述
-
-# 3️⃣ 聚合版本（自动升版本号）
-npm run version
-# 自动更新 package.json 和 CHANGELOG.md
-
-# 4️⃣ 一键发版
-npm run release
-# 自动提交、打标签、推送到远程
-```
+| 类型 | 说明 | 版本变化 |
+|------|------|----------|
+| `feat` | 新功能 | minor |
+| `fix` | Bug 修复 | patch |
+| `docs` | 文档变更 | - |
+| `style` | 代码格式（不影响功能） | - |
+| `refactor` | 重构（不是修复也不是新功能） | - |
+| `perf` | 性能优化 | - |
+| `test` | 测试相关 | - |
+| `build` | 构建系统或依赖变更 | - |
+| `ci` | CI 配置变更 | - |
+| `chore` | 其他变更 | - |
+| `BREAKING CHANGE` | 破坏性变更 | major |
 
 ### 📦 版本号规则（严格 SemVer）
 
@@ -149,43 +112,53 @@ npm run release
 | `minor` | 新功能、兼容更新 | 0.x.0 |
 | `major` | 重大变更、不兼容重构 | x.0.0 |
 
-### 🔍 详细操作步骤
+### 🚀 发布流程
 
-#### 1. 记录功能变更
-
-```bash
-npm run change
-```
-
-交互步骤：
-1. 选择变更类型：`patch | minor | major`
-2. 输入功能描述（如：新增首页轮播、修复登录弹窗 bug）
-3. 自动生成 `.changeset/xxx.md` 功能变更文件
-
-#### 2. 聚合版本号
+#### 1. 开发并提交
 
 ```bash
-npm run version
+# ... 在 main 分支编写代码 ...
+
+git add .
+git commit -m "feat: 新增某某功能"
+git push origin main
 ```
 
-自动完成：
-- ✅ 修改 `package.json` 版本号（零手动）
-- ✅ 生成/更新 `CHANGELOG.md`
-- ✅ 删除已聚合的 `.changeset` 临时文件
-
-#### 3. 一键发布
+#### 2. 准备发布
 
 ```bash
-npm run release
+# 切换到 release 分支并合并 main
+git checkout release
+git merge main
+git push origin release
 ```
 
-自动完成：
-- ✅ Git 添加所有更改
-- ✅ Git 提交 (`chore: release vX.X.X`)
-- ✅ 创建 Git 标签 (`vX.X.X`)
-- ❓ 询问是否推送到远程
+#### 3. CI 自动完成
 
-#### 4. 版本回滚
+推送到 release 分支后，GitHub Actions 自动完成：
+- ✅ 安装依赖
+- ✅ 构建项目
+- ✅ 分析 commit 历史确定版本号
+- ✅ 生成 CHANGELOG.md
+- ✅ 创建 GitHub Release
+- ✅ 更新 package.json 版本
+- ✅ 创建 Git 标签
+- ✅ 提交所有更改
+- ✅ 合并 release 到 main 分支
+
+#### 4. Vercel 自动部署
+
+Vercel 检测到 main 分支更新，自动部署到生产环境。
+
+### ⚙️ 配置文件
+
+- **Semantic Release**: `.releaserc`
+- **GitHub Actions**: `.github/workflows/release.yml`
+- **Vercel**: `vercel.json` - 只允许 main 分支部署
+
+### 🔍 手动操作
+
+#### 版本回滚
 
 ```bash
 npm run rollback
@@ -195,37 +168,34 @@ npm run rollback
 
 ### 🎯 版本管理优势
 
-- **版本号管理**：全自动，永不手动改，严格 SemVer，全局唯一
-- **功能更新管理**：每个功能绑定变更，可归集、可追溯、可合并
-- **版本管控**：Git Tag + Changesets 双保险，发布/回滚一键搞定
-- **客户端更新**：版本号联动，自动提示新功能，解决缓存问题
-- **全闭环**：从开发→功能记录→版本→发布→更新→回滚，一个体系、一套工具
+- **自动化**：完全自动化的版本发布流程
+- **版本号管理**：全自动，基于 commit 历史分析，严格 SemVer
+- **CHANGELOG 生成**：自动根据 commit 信息生成
+- **GitHub Release**：自动创建，包含完整的 Release Notes
+- **版本管控**：Git Tag + Semantic Release 双保险
 
 ## 📁 项目结构
 
 ```
 tools/
-├── .changeset/           # Changesets 配置
-│   ├── config.json
-│   └── README.md
-├── public/               # 静态资源
-├── scripts/              # 脚本
-│   ├── release.js        # 发布脚本
-│   └── rollback.js       # 回滚脚本
+├── .releaserc              # Semantic Release 配置
+├── public/                  # 静态资源
+├── scripts/                 # 脚本
+│   └── rollback.js          # 回滚脚本
 ├── src/
-│   ├── app/              # Next.js App Router
-│   │   ├── api/          # API 路由
-│   │   ├── page.tsx      # 首页
-│   │   └── settings/     # 设置页面
-│   ├── components/       # React 组件
-│   │   ├── layout/       # 布局组件
+│   ├── app/                # Next.js App Router
+│   │   ├── api/            # API 路由
+│   │   ├── page.tsx        # 首页
+│   │   └── settings/       # 设置页面
+│   ├── components/         # React 组件
+│   │   ├── layout/         # 布局组件
 │   │   └── UpdateChecker.tsx  # 版本更新检测
-│   ├── config/           # 配置文件
-│   │   └── version.ts    # 版本历史
-│   ├── utils/            # 工具函数
-│   │   └── version.ts    # 版本号读取
-│   └── hooks/            # React Hooks
-├── CHANGELOG.md          # 更新日志
+│   ├── config/             # 配置文件
+│   │   └── version.ts      # 版本历史
+│   ├── utils/              # 工具函数
+│   │   └── version.ts      # 版本号读取
+│   └── hooks/              # React Hooks
+├── CHANGELOG.md            # 更新日志
 ├── package.json
 └── README.md
 ```
@@ -270,7 +240,7 @@ npm run lint
 
 1. Fork 本仓库
 2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+3. 提交更改 (`git commit -m 'feat: Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 提交 Pull Request
 
@@ -282,7 +252,7 @@ npm run lint
 
 - [Next.js](https://nextjs.org/) - React 框架
 - [Tailwind CSS](https://tailwindcss.com/) - CSS 框架
-- [Changesets](https://www.changesets.com/) - 版本管理工具
+- [Semantic Release](https://semantic-release.gitbook.io/semantic-release/) - 版本管理工具
 
 ---
 

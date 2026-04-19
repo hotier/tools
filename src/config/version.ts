@@ -1,6 +1,6 @@
-import { APP_VERSION as VERSION } from "@/utils/version";
+import pkg from "../../package.json";
 
-export const APP_VERSION = VERSION;
+export const APP_VERSION = pkg.version;
 
 export const VERSION_HISTORY = [
   {

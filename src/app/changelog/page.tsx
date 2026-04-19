@@ -76,9 +76,11 @@ function parseVersionBlock(block: string, index: number): VersionEntry | null {
     // 处理包含提交哈希和感谢信息的行，提取变更内容
     if (trimmed.match(/^-\s+\[.+\].*Thanks/)) {
       // 提取变更内容（去掉提交哈希和感谢信息）
-      const contentMatch = trimmed.match(/Thanks\s+\[@[\w-]+\]!\s*-(.*)/);
-      if (contentMatch && contentMatch[1]) {
-        const item = cleanText(contentMatch[1]);
+      // 匹配格式: - [`a1aea95`](https://github.com/hotier/tools/commit/a1aea957374dc3385eb9adf5c14a29de41ddb587) Thanks [@hotier](https://github.com/hotier)! - 优化了用户体验
+      // 直接提取最后一个 "- " 后的内容
+      const parts = trimmed.split(" - ");
+      if (parts.length > 1) {
+        const item = cleanText(parts[parts.length - 1]);
         if (item) {
           if (!currentTitle) {
             currentTitle = "其他";
@@ -127,9 +129,16 @@ function parseVersionBlock(block: string, index: number): VersionEntry | null {
       }
       currentItems = [];
     } else if (trimmed.startsWith("- ")) {
+      // 处理普通的变更行
       const item = cleanText(trimmed.slice(2));
-      if (item) currentItems.push(item);
+      if (item) {
+        if (!currentTitle) {
+          currentTitle = "其他";
+        }
+        currentItems.push(item);
+      }
     } else if (trimmed.startsWith("  - ") || trimmed.startsWith("\t- ")) {
+      // 处理缩进的变更行
       const item = cleanText(trimmed.replace(/^[\s]+-\s/, ""));
       if (item && currentItems.length > 0) {
         currentItems[currentItems.length - 1] += " " + item;
@@ -200,7 +209,8 @@ function VersionCard({ entry }: { entry: VersionEntry }) {
 
 export default async function ChangelogPage() {
   const changelog = await getChangelog();
-  const blocks = changelog.split(/(?=^##\s+)/m).filter(Boolean);
+  // 修复版本块分割，确保正确分割版本
+  const blocks = changelog.split(/(?=^##\s+(?:\[?[\d.]+\]?|Unreleased))/m).filter(Boolean);
   const versions = blocks.map((b, i) => parseVersionBlock(b, i)).filter((v): v is VersionEntry => v !== null).slice(0, 10);
 
   return (

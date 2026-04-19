@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- [`a1aea95`](https://github.com/hotier/tools/commit/a1aea957374dc3385eb9adf5c14a29de41ddb587) Thanks [@hotier](https://github.com/hotier)! - - 优化了用户体验
+- [`a1aea95`](https://github.com/hotier/tools/commit/a1aea957374dc3385eb9adf5c14a29de41ddb587) Thanks [@hotier](https://github.com/hotier)! - 优化了用户体验
 
 ## [0.7.1] - 2026-04-19
 
