@@ -2,6 +2,12 @@
 
 所有重要的变更都将记录在此文件中。
 
+## [0.7.1](https://github.com/hotier/tools/compare/v0.7.0...v0.7.1) (2026-04-19)
+
+### 🐛 修复
+
+* 修复 workflow 中的 stash 操作和分支合并逻辑 ([ce1ec7e](https://github.com/hotier/tools/commit/ce1ec7e3f149982dd00e146ba46504a484df8cae))
+
 ## [0.7.0](https://github.com/hotier/tools/compare/v0.6.1...v0.7.0) (2026-04-19)
 
 ### ✨ 新功能
