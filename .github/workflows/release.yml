@@ -44,7 +44,10 @@ jobs:
       - name: Merge release into main
         if: success()
         run: |
+          git stash
           git checkout main
           git pull origin main
           git merge --no-ff -X theirs origin/release -m "Release: merge release into main"
           git push origin main
+          git checkout release
+          git stash pop
